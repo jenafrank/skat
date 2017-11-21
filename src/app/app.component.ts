@@ -2,9 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { AngularFireDatabase } from "angularfire2/database";
 import Chart from "chart.js";
+import { LogicService, GameData } from "./logic.service";
+
 
 @Component({
   selector: 'app-root',
+  providers: [ LogicService ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
@@ -51,17 +54,19 @@ export class AppComponent implements OnInit{
     });
   }  
   
-  items: Observable<any[]>;
-  itemobj: Observable<any>;
-  
   title = 'www.gutblatt.de';    
   
-  constructor(db: AngularFireDatabase) {
-    this.items = db.list('data').valueChanges();
-    this.itemobj = db.object("season_1").valueChanges();
-
-    this.items.subscribe(val => console.log(val));
-    this.itemobj.subscribe(val => console.log(val));
+  constructor(db: AngularFireDatabase, logic: LogicService) {
+    // this.items = db.list('data').valueChanges();
+    // this.items.subscribe(val => console.log(val));
+    
+    let x:Observable<any> = db.object("season_19").valueChanges();    
+    x.subscribe(response => { 
+      console.log(response);     
+      logic.accumulateSeason(response);
+      console.log(logic.punkte);
+      console.log(logic.gespielt);
+    });
   }
 
 }
