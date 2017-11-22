@@ -66,6 +66,8 @@ export class AppComponent implements OnInit{
       logic.accumulateSeason(response);
       console.log(logic.punkte);
       console.log(logic.gespielt);
+      console.log(logic.punkteSeries);
+      console.log(logic.spieltagSeries);
     });
   }
 

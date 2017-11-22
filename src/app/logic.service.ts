@@ -5,12 +5,36 @@ import { isUndefined } from 'util';
 export class LogicService {
 
   registeredPlayers: string[];
+
+  // acc
   punkte: Map<string, number>;
   teilgenommen: Map<string, number>;
   gewonnen: Map<string, number>;
   gespielt: Map<string, number>;
   gewonnenGegenspiel: Map<string, number>;
   gespieltGegenspiel: Map<string, number>;
+
+  // derived acc
+  ratioGegen: Map<string, number>;
+  ratioAllein: Map<string, number>;
+  ratioGespielt: Map<string, number>;
+  ronaldFaktor: Map<string, number>;
+  ronaldGedeckelt: Map<string, number>;
+  ronaldPunkte: Map<string, number>;
+  verGegen: Map<string, number>;
+  ver: Map<string, number>;
+  turnierPunkte: Map<string, number>;
+  turnierRonaldPunkte: Map<string, number>;
+  turnierPPT: Map<string, number>;
+  ratioPPT: Map<string, number>;
+
+  // series
+  spieltagSeries: Map<number,number>;
+  punkteSeries: Map<string, Map<number, number>>;
+
+  // counters
+  currentDay:number;
+  currentTotalGame:number;
 
   constructor() { 
     this.reset();
@@ -24,14 +48,20 @@ export class LogicService {
     this.gespielt = new Map([["E", 0]]);
     this.gewonnenGegenspiel = new Map();
     this.gespieltGegenspiel = new Map();
+
+    this.punkteSeries = new Map();
+    this.spieltagSeries = new Map();
+    this.currentDay = 0;
+    this.currentTotalGame = 0;
   }
 
   accumulateSeason(data:any) {
     let i:number = 1;
-    while ( ! isUndefined(data[this.day(i)])) {      
+    while ( ! isUndefined(data[this.day(i)])) {
+      this.currentDay = i;      
       this.accumulateDay(data[this.day(i)]);      
       i++;
-    }        
+    }            
   }
 
   accumulateDay(data:any) {
@@ -46,29 +76,107 @@ export class LogicService {
   accumulate(data:GameData):void {
 
     this.addNewPlayers(data.activeThree);
+    this.currentTotalGame++;
 
     for (let ply of data.activeThree) {
-      this.teilgenommen[ply] += 1;
+      this.inc(this.teilgenommen,ply);
     }
-    this.gespielt[data.declarer] += 1;
+    this.inc(this.gespielt,data.declarer);
 
     // Eingemischt-Barriere:
     if (data.declarer == 'E') return;
 
     // Reguläres Spiel:
-    this.punkte[data.declarer] += data.points;
-    if (data.points > 0) this.gewonnen[data.declarer] += 1;
+    this.add(this.punkte,data.declarer,data.points);
+    this.incWithCondition(this.gewonnen,data.declarer,data.points > 0);
 
     // Nur für Gegenspiel-Statistik:
     for (let ply of data.activeThree) {
       if ( ply != data.declarer ) {
-        this.gespieltGegenspiel[ply] += 1;
-        if ( data.points < 0 ) this.gewonnenGegenspiel[ply] += 1;
+        this.inc(this.gespieltGegenspiel,ply);
+        this.incWithCondition(this.gewonnenGegenspiel,ply,data.points < 0);
       }      
+    }
+
+    // Add data to series quantities
+    this.punkteSeries
+      .get(data.declarer)
+      .set(this.currentTotalGame, this.punkte.get(data.declarer));
+
+    if (this.currentDay > 0) {
+      this.spieltagSeries.set(this.currentDay, this.currentTotalGame);
     }
 
     // Fehlerüberprüfung aus "all Five", "mod" und "activeThree" möglich
     // ...
+  }
+
+  private calculateDerivedQuantities() {
+
+    // Calculate reference number of games for ronald faktor
+    let maxgames = 0.;
+    for( let ply in this.registeredPlayers) {
+      let Nply = this.gespielt.get(ply);
+      if (Nply > maxgames) maxgames = Nply;
+    }
+
+    // define cap
+    let deckel = 3.;
+
+    // Derive quantities:
+    for( let ply in this.registeredPlayers ) {
+
+      this.ratioGegen
+      .set(ply, this.gewonnenGegenspiel.get(ply) / this.gespieltGegenspiel.get(ply) * 100.);
+      
+      this.ratioAllein
+      .set(ply, this.gewonnen.get(ply) / this.gespielt.get(ply) * 100.);
+      
+      this.ratioGespielt
+      .set(ply,  this.gespielt.get(ply) / this.teilgenommen.get(ply) * 100.);      
+      
+      this.ronaldFaktor
+      .set(ply,  maxgames / this.teilgenommen.get(ply));      
+
+      this.ronaldGedeckelt
+      .set(ply,  this.ronaldFaktor.get(ply) > deckel ? deckel : this.ronaldFaktor.get(ply));      
+
+      this.ronaldPunkte
+      .set(ply,  this.ronaldGedeckelt.get(ply) * this.punkte.get(ply));      
+      
+      this.verGegen
+      .set(ply,  this.gespieltGegenspiel.get(ply) - this.gewonnenGegenspiel.get(ply));      
+      
+      this.ver
+      .set(ply,  this.gespielt.get(ply) - this.gewonnen.get(ply));      
+      
+      this.turnierPunkte
+      .set(ply,  this.punkte.get(ply) + 50 * (this.gewonnen.get(ply) - this.ver.get(ply)) + 40 * this.gewonnenGegenspiel.get(ply));      
+      
+      this.turnierRonaldPunkte
+      .set(ply,  this.turnierPunkte.get(ply) * this.ronaldGedeckelt.get(ply));      
+      
+      this.turnierPPT
+      .set(ply,  this.turnierPunkte.get(ply) / this.teilgenommen.get(ply));      
+      
+      this.ratioPPT
+      .set(ply,  this.punkte.get(ply) / this.teilgenommen.get(ply));
+
+    }
+  }
+
+  private add(map: Map<string,number>, key: string, x: number) {
+    map.set(key,map.get(key)+x);
+  }
+
+  private inc(map: Map<string,number>, key: string) {
+    map.set(key,map.get(key)+1);
+  }
+
+  private incWithCondition(map: Map<string,number>, key: string, condition: boolean) {
+    if (condition) {
+      this.inc(map,key);
+    }
   }
 
   private day(i:number):string {
@@ -80,18 +188,21 @@ export class LogicService {
   }
 
   private addNewPlayers(players: string[]) {
+
     for (let ply of players) {
       if ( ! this.registeredPlayers.includes(ply)) {
         this.registeredPlayers.push(ply);
 
-        this.punkte[ply]=0;
-        this.teilgenommen[ply]=0;
-        this.gewonnen[ply]=0;
-        this.gespielt[ply]=0;
-        this.gewonnenGegenspiel[ply]=0;
-        this.gespieltGegenspiel[ply]=0;
+        this.punkte.set(ply,0);
+        this.teilgenommen.set(ply,0);
+        this.gewonnen.set(ply,0);
+        this.gespielt.set(ply,0);
+        this.gewonnenGegenspiel.set(ply,0);
+        this.gespieltGegenspiel.set(ply,0);
+        this.punkteSeries.set(ply, new Map());
       }
     }
+
   }
   
   transformResponseToGameData(response: any):GameData {
