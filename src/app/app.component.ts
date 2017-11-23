@@ -3,6 +3,7 @@ import { Observable } from 'rxjs/Observable';
 import { AngularFireDatabase } from "angularfire2/database";
 import Chart from "chart.js";
 import { LogicService, GameData } from "./logic.service";
+import { isUndefined } from 'util';
 
 
 @Component({
@@ -13,16 +14,124 @@ import { LogicService, GameData } from "./logic.service";
 })
 
 export class AppComponent implements OnInit{
+
+  currentPlotKey:string;
+  currentPlotValue:string;
+
+  currentSeason:number;
+  selectedSeason:number;  
+  seasons: number[];
+  labels:Map<string, string>;
+  labelkeys:string[];
+
+  data:Observable<any>;
+
+  myChart: Chart;
+
+  // logic: LogicService;
+  // db: AngularFireDatabase;
   
   ngOnInit(): void {
+
+    this.selectedSeason = 26;
+    this.currentSeason = 26;
+    this.labels = this.logic.labels;
+    this.labelkeys = Array.from(this.labels.keys());
+    
+    this.currentPlotKey = "Echte Punkte";
+    this.currentPlotValue = this.labels.get(this.currentPlotKey);
+        
+    this.loadData();
+    this.generateSeasonArray();
+
+  }  
+  
+  title = 'www.gutblatt.de';    
+  
+  constructor(private db: AngularFireDatabase, private logic: LogicService) {}
+
+  loadData():void {    
+    this.data = this.db.object(this.logic.season(this.selectedSeason)).valueChanges();
+
+    console.log(this.logic.season(this.selectedSeason))
+    console.log(this.data);
+
+    this.data.subscribe(response => { 
+      console.log(response);     
+
+      this.logic.accumulateSeason(response);
+
+      console.log(this.logic.punkte);
+      console.log(this.logic.gespielt);
+      console.log(this.logic.punkteSeries);
+      console.log(this.logic.spieltagSeries);
+      console.log(this.logic.ronaldPunkte);
+      console.log(this.logic.teilgenommen);
+      
+      this.logic.calculateDerivedQuantities();
+      this.plot(this.currentPlotKey);      
+    });
+  }
+
+  generateSeasonArray():void {
+    this.seasons = [];
+
+    let i:number;
+    for(i=this.currentSeason;i>=1;i--) {
+      this.seasons.push(i);
+    }
+  }
+
+  generateItemString(i:number):string {
+    return "Saison " + i; 
+  }
+
+  getSortedMap(mapkey:string):Map<string, number> {
+    
+    // invert map
+    let map: Map<string,number>;
+    map = this.logic[this.labels.get(mapkey)];
+    let invMap: Map<number, string>;
+    invMap = new Map();
+    let pnts: number[];
+    pnts = [];
+
+    for (let ky of Array.from(map.keys())) {
+      invMap.set(map.get(ky),ky);
+      pnts.push(map.get(ky));
+    }
+
+    // sort points
+    pnts = pnts.sort((n1,n2) => n2 - n1);
+
+    // return according names
+    let newmap: Map<string,number>;
+    newmap = new Map();
+
+    for (let x of pnts) {
+      newmap.set(invMap.get(x),x);
+    }
+
+    return newmap;
+  }
+  
+  plot(key:string):void {
+
+    let smap: Map<string,number>;
+    smap = this.getSortedMap(key);
+
+    let labels:string[] = Array.from(smap.keys());
+    let values:number[] = Array.from(smap.values());
+
     var ctx = document.getElementById("myChart");
-    var myChart = new Chart(ctx, {
+    
+    if ( ! isUndefined(this.myChart)) this.myChart.destroy();
+    this.myChart = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-        datasets: [{
-          label: '# of Votes',
-          data: [12, 19, 3, 5, 2, 3],
+        labels: labels,
+        datasets: [{          
+          data: values,
           backgroundColor: [
             'rgba(255, 99, 132, 0.2)',
             'rgba(54, 162, 235, 0.2)',
@@ -51,23 +160,6 @@ export class AppComponent implements OnInit{
           }]
         }
       }
-    });
-  }  
-  
-  title = 'www.gutblatt.de';    
-  
-  constructor(db: AngularFireDatabase, logic: LogicService) {
-    // this.items = db.list('data').valueChanges();
-    // this.items.subscribe(val => console.log(val));
-    
-    let x:Observable<any> = db.object("season_19").valueChanges();    
-    x.subscribe(response => { 
-      console.log(response);     
-      logic.accumulateSeason(response);
-      console.log(logic.punkte);
-      console.log(logic.gespielt);
-      console.log(logic.punkteSeries);
-      console.log(logic.spieltagSeries);
     });
   }
 

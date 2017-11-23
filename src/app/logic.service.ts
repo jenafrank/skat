@@ -28,6 +28,9 @@ export class LogicService {
   turnierPPT: Map<string, number>;
   ratioPPT: Map<string, number>;
 
+  // Labels
+  labels: Map<string, string>;
+
   // series
   spieltagSeries: Map<number,number>;
   punkteSeries: Map<string, Map<number, number>>;
@@ -37,7 +40,33 @@ export class LogicService {
   currentTotalGame:number;
 
   constructor() { 
+    this.initLabels();
     this.reset();
+  }
+
+  initLabels():void {
+    this.labels = new Map(
+      [
+        ["Echte Punkte", "punkte"],
+        ["Teilgenommene Spiele", "teilgenommen"],
+        ["Gewonnene Spiele", "gewonnen"],
+        ["Spiele als Alleinspieler", "gespielt"],
+        ["Gewonnene Spiele als Gegenspieler", "gewonnenGegenspiel"],
+        ["Spiele als Gegenspieler", "gespieltGegenspiel"],
+        ["% Gewonnene Gegenspiele", "ratioGegen"],
+        ["% Gewonnene Alleinspiele", "ratioAllein"],
+        ["% Anteil Alleinspiele an Teilgenommenen", "ratioGespielt"],
+        ["Ronald-Faktor", "ronaldFaktor"],
+        ["Ronald-Faktor mit Deckelung", "ronaldGedeckelt"],
+        ["Punkte", "ronaldPunkte"],
+        ["Verlorene Spiele als Gegenspieler", "verGegen"],
+        ["Verlorene Spiele als Alleinspieler", "ver"],
+        ["Echte Turnier-Punkte", "turnierPunkte"],
+        ["Turnier-Punkte", "turnierRonaldPunkte"],
+        ["Punkte-Pro-Teilgenommen Turnier", "turnierPPT"],
+        ["Punkte-Pro-Teilgenommen", "ratioPPT"]
+      ]
+    );
   }
 
   reset():void {
@@ -53,6 +82,19 @@ export class LogicService {
     this.spieltagSeries = new Map();
     this.currentDay = 0;
     this.currentTotalGame = 0;
+
+    this.ratioGegen = new Map();
+    this.ratioAllein = new Map();
+    this.ratioGespielt = new Map();
+    this.ronaldFaktor = new Map();
+    this.ronaldGedeckelt = new Map();
+    this.ronaldPunkte = new Map();
+    this.verGegen = new Map();
+    this.ver = new Map();
+    this.turnierPunkte = new Map();
+    this.turnierRonaldPunkte = new Map();
+    this.turnierPPT = new Map();
+    this.ratioPPT = new Map();
   }
 
   accumulateSeason(data:any) {
@@ -111,12 +153,19 @@ export class LogicService {
     // ...
   }
 
-  private calculateDerivedQuantities() {
+  season(i:number):string {
+    return "season_"+i;
+  }
+
+  calculateDerivedQuantities() {
 
     // Calculate reference number of games for ronald faktor
     let maxgames = 0.;
-    for( let ply in this.registeredPlayers) {
-      let Nply = this.gespielt.get(ply);
+    for( let i in this.registeredPlayers) {
+      let ply:string = this.registeredPlayers[i];
+      if (ply == 'E') continue;
+   
+      let Nply = this.teilgenommen.get(ply);
       if (Nply > maxgames) maxgames = Nply;
     }
 
@@ -124,7 +173,11 @@ export class LogicService {
     let deckel = 3.;
 
     // Derive quantities:
-    for( let ply in this.registeredPlayers ) {
+    for( let i in this.registeredPlayers ) {
+
+      let ply:string = this.registeredPlayers[i];
+
+      if (ply == 'E') continue;
 
       this.ratioGegen
       .set(ply, this.gewonnenGegenspiel.get(ply) / this.gespieltGegenspiel.get(ply) * 100.);
