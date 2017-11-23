@@ -31,6 +31,10 @@ export class LogicService {
   // Labels
   labels: Map<string, string>;
 
+  // Colors
+  colors: Map<string, string>;
+  borders: Map<string, string>;
+
   // series
   spieltagSeries: Map<number,number>;
   punkteSeries: Map<string, Map<number, number>>;
@@ -41,9 +45,45 @@ export class LogicService {
 
   constructor() { 
     this.initLabels();
+    this.initColors();
+    this.initBorders();
     this.reset();
   }
 
+  initColors():void {
+    this.colors = new Map([
+      ["A", "rgba(255,0,0,0.5)"],
+      ["F", "rgba(0,255,0,0.5)"],
+      ["R", "rgba(0,0,255,0.5)"],
+      ["Ro", "rgba(255,0,255,0.5)"],
+      ["Od", "rgba(255,128,128,0.5)"],
+      ["T", "rgba(0,255,255,0.5)"],
+      ["S", "rgba(128,0,0,0.5)"],
+      ["M", "rgba(0,128,0,0.5)"],
+      ["C", "rgba(0,0,128,0.5)"],
+      ["J", "rgba(128,128,0,0.5)"],
+      ["Ra", "rgba(128,0,128,0.5)"],
+      ["P", "rgba(0,128,128,0.5)"]      
+    ]);
+  }
+
+  initBorders():void {
+    this.borders = new Map([
+      ["A", "rgba(255,0,0,1)"],
+      ["F", "rgba(0,255,0,1)"],
+      ["R", "rgba(0,0,255,1)"],
+      ["Ro", "rgba(255,0,255,1)"],
+      ["Od", "rgba(255,128,128,1)"],
+      ["T", "rgba(0,255,255,1)"],
+      ["S", "rgba(128,0,0,1)"],
+      ["M", "rgba(0,128,0,1)"],
+      ["C", "rgba(0,0,128,1)"],
+      ["J", "rgba(128,128,0,1)"],
+      ["Ra", "rgba(128,0,128,1)"],
+      ["P", "rgba(0,128,128,1)"]
+    ]);    
+  }
+  
   initLabels():void {
     this.labels = new Map(
       [
