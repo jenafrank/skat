@@ -177,6 +177,12 @@ export class AppComponent implements OnInit{
       },
       options: {
 
+        layout: {
+          padding: {
+            top: 20
+          }
+        },
+
         maintainAspectRatio: false,
 
         tooltips: {
