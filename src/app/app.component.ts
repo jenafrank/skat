@@ -91,13 +91,20 @@ export class AppComponent implements OnInit{
     // invert map
     let map: Map<string,number>;
     map = this.logic[this.labels.get(mapkey)];
-    let invMap: Map<number, string>;
+    
+    let invMap: Map<number, string[]>;
     invMap = new Map();
+    
     let pnts: number[];
     pnts = [];
 
     for (let ky of Array.from(map.keys())) {
-      invMap.set(map.get(ky),ky);
+      let arr:string[] = invMap.get(map.get(ky));
+      if ( isUndefined(arr) ) {
+        invMap.set(map.get(ky),[ky]);
+      } else {        
+        arr.push(ky);
+      }
       pnts.push(map.get(ky));
     }
 
@@ -109,7 +116,10 @@ export class AppComponent implements OnInit{
     newmap = new Map();
 
     for (let x of pnts) {
-      newmap.set(invMap.get(x),x);
+      let arr:string[] = invMap.get(x);
+      for (let str of arr) {        
+        newmap.set(str,x);
+      }      
     }
 
     return newmap;
