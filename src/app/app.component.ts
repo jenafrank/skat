@@ -4,6 +4,8 @@ import { AngularFireDatabase } from "angularfire2/database";
 import Chart from "chart.js";
 import { LogicService, GameData } from "./logic.service";
 import { isUndefined } from 'util';
+import { AngularFireAuth } from 'angularfire2/auth';
+import * as firebase from 'firebase/app';
 
 @Component({
   selector: 'app-root',
@@ -27,6 +29,9 @@ export class AppComponent implements OnInit{
 
   myChart: Chart;
 
+  provider: any;
+  user: any;
+
   // logic: LogicService;
   // db: AngularFireDatabase;
   
@@ -39,15 +44,28 @@ export class AppComponent implements OnInit{
     
     this.currentPlotKey = "Echte Punkte";
     this.currentPlotValue = this.labels.get(this.currentPlotKey);
-        
+    
     this.loadData();
     this.generateSeasonArray();
 
+    this.provider = new firebase.auth.GoogleAuthProvider();
   }  
   
   title = 'www.gutblatt.de';    
   
-  constructor(private db: AngularFireDatabase, private logic: LogicService) {}
+  constructor(private db: AngularFireDatabase, private logic: LogicService, private afAuth: AngularFireAuth) {}
+
+  login() {
+    this.afAuth.auth.signInWithPopup(this.provider).then((result) => {
+      this.user = result.user;
+      console.log(this.user);
+      console.log(this.afAuth);
+    });
+  }
+  logout() {
+    this.afAuth.auth.signOut();
+    console.log(this.afAuth);
+  }
 
   loadData():void {    
     this.data = this.db.object(this.logic.season(this.selectedSeason)).valueChanges();

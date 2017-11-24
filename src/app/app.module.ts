@@ -11,6 +11,8 @@ MatIconModule, MatButtonModule } from "@angular/material";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatGridListModule } from '@angular/material/grid-list';
+import {MatCardModule} from '@angular/material/card';
+import { AngularFireAuth } from 'angularfire2/auth';
 
 
 @NgModule({
@@ -28,8 +30,9 @@ import { MatGridListModule } from '@angular/material/grid-list';
     BrowserAnimationsModule,
     MatButtonModule,
     MatSidenavModule,
-    MatGridListModule ],
-  providers: [],
+    MatGridListModule,
+    MatCardModule ],
+  providers: [AngularFireAuth],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

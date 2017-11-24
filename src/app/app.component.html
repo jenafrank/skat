@@ -2,42 +2,48 @@
 
 <mat-toolbar color="primary">
 
-<span>gutblatt.de</span>
+  <span>gutblatt.de</span>
 
 
-<span class="example-spacer"></span>
+  <span class="example-spacer"></span>
 
-<button mat-raised-button [matMenuTriggerFor]="menu" color="primary">
-  {{generateItemString(selectedSeason)}}
-</button>
+  <button mat-raised-button [matMenuTriggerFor]="menu" color="primary">
+    {{generateItemString(selectedSeason)}}
+  </button>
 
-<mat-menu #menu="matMenu">  
-<mat-grid-list cols="5" gutterSize="3px">
-  <mat-grid-tile *ngFor="let el of seasons" style="background: light-blue" (click)="selectedSeason=el;">       
-      <div style="cursor: pointer;font-weight: bold;font-family:Arial, Helvetica, sans-serif;">{{el}}</div>      
-  </mat-grid-tile>  
-</mat-grid-list>
-</mat-menu>
+  <mat-menu #menu="matMenu">
+    <mat-grid-list cols="5" gutterSize="3px">
+      <mat-grid-tile *ngFor="let el of seasons" style="background: light-blue" (click)="selectedSeason=el;">
+        <div style="cursor: pointer;font-weight: bold;font-family:Arial, Helvetica, sans-serif;">{{el}}</div>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </mat-menu>
 
 
 </mat-toolbar>
 
 <mat-sidenav-container>
 
-<div style="height: 80vh;">
-  <canvas id="myChart" width="400" height="400"></canvas>
-</div>
+  <div style="height: 80vh;">
+    <canvas id="myChart" width="400" height="400"></canvas>
+  </div>
 
-<button mat-mini-fab class="example-fab" (click)="sidenav.toggle()" style="position:absolute; top:10px; right:10px;">
-  <mat-icon>keyboard_arrow_down</mat-icon>
-</button>
+  <button mat-mini-fab class="example-fab" (click)="sidenav.toggle()" style="position:absolute; top:10px; right:10px;">
+    <mat-icon>menu</mat-icon>
+  </button>
 
-<mat-sidenav #sidenav mode="over" opened="false">
-    
-        <button *ngFor="let el of labelkeys" mat-menu-item (click)="currentPlotKey=el;currentPlotValue=this.labels.get(el);plot(currentPlotKey);sidenav.toggle();">
-          {{el}}
-        </button>
-    
-</mat-sidenav>
+  <mat-sidenav #sidenav mode="over" opened="false">
+
+    <button *ngFor="let el of labelkeys" mat-menu-item (click)="currentPlotKey=el;currentPlotValue=this.labels.get(el);plot(currentPlotKey);sidenav.toggle();">
+      {{el}}
+    </button>
+
+  </mat-sidenav>
 
 </mat-sidenav-container>
+
+<mat-card>
+    <button *ngIf="!afAuth.auth.currentUser" mat-raised-button (click)="login()">Login</button>    
+    <button *ngIf="afAuth.auth.currentUser" mat-raised-button (click)="logout()">Logout</button>
+    <div *ngIf="afAuth.auth.currentUser">Logged in as {{user.displayName}}</div>
+</mat-card>
