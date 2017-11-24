@@ -5,7 +5,6 @@ import Chart from "chart.js";
 import { LogicService, GameData } from "./logic.service";
 import { isUndefined } from 'util';
 
-
 @Component({
   selector: 'app-root',
   providers: [ LogicService ],
@@ -146,7 +145,13 @@ export class AppComponent implements OnInit{
 
     let newvalues: number[] = [];
     for (let el of values) {
-      newvalues.push(+el.toFixed(2));
+      if (el < 100) {
+        newvalues.push(+el.toFixed(2));
+      } else if (el < 1000) {
+        newvalues.push(+el.toFixed(1));
+      } else {
+        newvalues.push(+el.toFixed(0));
+      }
     }
     return newvalues;    
   }
@@ -177,11 +182,21 @@ export class AppComponent implements OnInit{
       },
       options: {
 
+        title: {
+          display: true,
+          text: key,
+          padding: 20,
+          fontSize: 16
+        },
+
+        /*
         layout: {
           padding: {
-            top: 20
+            top: 40,
+            left: 10
           }
         },
+        */
 
         maintainAspectRatio: false,
 
@@ -221,7 +236,7 @@ export class AppComponent implements OnInit{
           yAxes: [{
             ticks: {
               beginAtZero: true,
-              fontSize: 20
+              fontSize: 16
             }
           }],
           xAxes: [{

@@ -5,3 +5,21 @@
 .example-spacer {
     flex: 1 1 auto;
   }
+
+.cdk-overlay-pane {
+  top: 0px;
+  right: 0px;
+}
+
+.mat-menu-panel {
+  width: 250px;
+  background: darkcyan;
+}
+
+mat-grid-tile {
+  background: lightblue;
+}
+
+mat-grid-list {
+  background: darkcyan;
+}
