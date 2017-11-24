@@ -22,28 +22,5 @@
 
 </mat-toolbar>
 
-<mat-sidenav-container>
+<router-outlet></router-outlet>
 
-  <div style="height: 80vh;">
-    <canvas id="myChart" width="400" height="400"></canvas>
-  </div>
-
-  <button mat-mini-fab class="example-fab" (click)="sidenav.toggle()" style="position:absolute; top:10px; right:10px;">
-    <mat-icon>menu</mat-icon>
-  </button>
-
-  <mat-sidenav #sidenav mode="over" opened="false">
-
-    <button *ngFor="let el of labelkeys" mat-menu-item (click)="currentPlotKey=el;currentPlotValue=this.labels.get(el);plot(currentPlotKey);sidenav.toggle();">
-      {{el}}
-    </button>
-
-  </mat-sidenav>
-
-</mat-sidenav-container>
-
-<mat-card>
-    <button *ngIf="!afAuth.auth.currentUser" mat-raised-button (click)="login()">Login</button>    
-    <button *ngIf="afAuth.auth.currentUser" mat-raised-button (click)="logout()">Logout</button>
-    <div *ngIf="afAuth.auth.currentUser">Logged in as {{user.displayName}}</div>
-</mat-card>
