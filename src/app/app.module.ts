@@ -19,6 +19,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { EditComponent } from './edit/edit.component';
 import { PagenotfoundComponent } from './pagenotfound/pagenotfound.component';
 import { ReadComponent } from './read/read.component';
+import { MatTableModule } from '@angular/material/table';
 
 const appRoutes: Routes = [
   {
@@ -64,7 +65,8 @@ const appRoutes: Routes = [
     MatSidenavModule,
     MatGridListModule,
     MatCardModule,
-    FlexLayoutModule],
+    FlexLayoutModule,
+    MatTableModule],
   providers: [AngularFireAuth],
   bootstrap: [AppComponent]
 })

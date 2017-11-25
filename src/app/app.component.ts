@@ -1,32 +1,44 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
+
+import { LogicService } from "./logic.service";
+import { PlotService } from './plot.service';
+import { DataService } from "./data.service";
+import { AuthenticationService } from './authentication.service';
 
 @Component({
   selector: 'app-root',
-  providers: [ ],
+  providers: [ LogicService, PlotService, DataService, AuthenticationService ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit{
- 
-  currentSeason:number;
-  selectedSeason:number;  
+    
   seasons: number[];
    
-  ngOnInit(): void {
-    this.selectedSeason = 26;
-    this.currentSeason = 26;    
+  ngOnInit(): void {      
     this.generateSeasonArray();
+    this.subscribeForAccumulation();
   }  
   
   title = 'www.gutblatt.de';    
   
-  constructor() {}
+  constructor(
+    private logic: LogicService,
+    private dataService: DataService) {}
+
+  subscribeForAccumulation():void {    
+    this.dataService.data.subscribe(response => {       
+      this.logic.accumulateSeason(response);      
+      this.logic.calculateDerivedQuantities();
+    });
+  }
 
   generateSeasonArray():void {
     this.seasons = [];
 
     let i:number;
-    for(i=this.currentSeason;i>=1;i--) {
+    for(i=this.dataService.currentSeason;i>=1;i--) {
       this.seasons.push(i);
     }
   }
@@ -34,5 +46,4 @@ export class AppComponent implements OnInit{
   generateItemString(i:number):string {
     return "Saison " + i; 
   }
-
 }

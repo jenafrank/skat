@@ -10,7 +10,7 @@
     
       <mat-sidenav #sidenav mode="over" opened="false">
     
-        <button *ngFor="let el of labelkeys" mat-menu-item (click)="currentPlotKey=el;currentPlotValue=this.labels.get(el);plot(currentPlotKey);sidenav.toggle();">
+        <button *ngFor="let el of labelkeys" mat-menu-item (click)="currentPlotKey=el;currentPlotValue=this.labels.get(el);plot.barplot(currentPlotKey);sidenav.toggle();">
           {{el}}
         </button>
     
@@ -20,14 +20,14 @@
     
     <mat-card>
     
-    <div *ngIf="afAuth.auth.currentUser === null" fxLayout="row" fxLayoutAlign="space-between center">
-      <button mat-raised-button (click)="login()">
+    <div *ngIf="auth.user() === null" fxLayout="row" fxLayoutAlign="space-between center">
+      <button mat-raised-button (click)="auth.login()">
         Login
       </button>
     </div>
-    <div *ngIf="afAuth.auth.currentUser !== null" fxLayout="row" fxLayoutAlign="space-between center">
+    <div *ngIf="auth.user() !== null" fxLayout="row" fxLayoutAlign="space-between center">
       <div> Eingeloggt als
-        <b>{{afAuth.auth.currentUser.displayName}}</b>
+        <b>{{auth.username()}}</b>
       </div>
       <div>
         <button mat-raised-button color="warn" (click)="goEdit()">
@@ -35,7 +35,7 @@
         </button>
       </div>
       <div>
-        <button mat-raised-button (click)="logout()">
+        <button mat-raised-button (click)="auth.logout()">
           Logout
         </button>
       </div>

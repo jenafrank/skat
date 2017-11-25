@@ -4,6 +4,7 @@ import { isUndefined } from 'util';
 @Injectable()
 export class LogicService {
 
+  // Accumulation of all players that occur in the current data state
   registeredPlayers: string[];
 
   // acc
@@ -47,7 +48,7 @@ export class LogicService {
     this.initLabels();
     this.initColors();
     this.initBorders();
-    this.reset();
+    this.reset();    
   }
 
   initColors():void {
@@ -191,10 +192,6 @@ export class LogicService {
 
     // Fehlerüberprüfung aus "all Five", "mod" und "activeThree" möglich
     // ...
-  }
-
-  season(i:number):string {
-    return "season_"+i;
   }
 
   calculateDerivedQuantities() {
