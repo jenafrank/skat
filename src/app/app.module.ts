@@ -20,6 +20,7 @@ import { EditComponent } from './edit/edit.component';
 import { PagenotfoundComponent } from './pagenotfound/pagenotfound.component';
 import { ReadComponent } from './read/read.component';
 import { MatTableModule } from '@angular/material/table';
+import { EditSpieltagComponent } from './edit-spieltag/edit-spieltag.component';
 
 const appRoutes: Routes = [
   {
@@ -29,6 +30,10 @@ const appRoutes: Routes = [
   {
     path: 'edit',
     component: EditComponent
+  },
+  {
+    path: 'edit/spieltag/:id',
+    component: EditSpieltagComponent
   },
   {
     path: '',
@@ -46,7 +51,8 @@ const appRoutes: Routes = [
     AppComponent,
     EditComponent,
     PagenotfoundComponent,
-    ReadComponent
+    ReadComponent,
+    EditSpieltagComponent
   ],
   imports: [
     RouterModule.forRoot(

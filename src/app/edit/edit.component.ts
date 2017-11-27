@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { DataService } from "../data.service";
+import { LogicService } from "../logic.service";
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'app-edit',
@@ -7,9 +10,24 @@ import { Component, OnInit } from '@angular/core';
 })
 export class EditComponent implements OnInit {
 
-  constructor() { }
+  totaldays: number;
+  days: number[];
+  
+  constructor(private dataService: DataService,
+   private logic: LogicService,
+   private router: Router
+  ) { }
 
-  ngOnInit() {
+  ngOnInit() {    
+    this.dataService.data.subscribe( (seasonData:any) => {            
+      this.totaldays = this.logic.totalday(seasonData);
+      this.days = (new Array(this.totaldays)).fill(1).map( (val,idx) => {
+        return idx+1;
+      })
+    });
+  }  
+
+  goSpieltag(i:number) {
+    this.router.navigate(['/edit/spieltag', i]);   
   }
-
 }

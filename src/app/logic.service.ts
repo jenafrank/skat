@@ -255,6 +255,26 @@ export class LogicService {
     }
   }
 
+  day(i:number):string {
+    return i > 10 ? "day_"+i : "day_0"+i;
+  }
+
+  game(i:number):string {
+    return "game_"+i;
+  }
+
+  totalday(data: any):number {
+    let i:number = 1;
+    while ( ! isUndefined(data[this.day(i)]) ) i++;
+    return i;
+  }
+
+  totalgame(data: any):number {
+    let i:number = 1;
+    while ( ! isUndefined(data[this.game(i)]) ) i++;
+    return i;
+  }
+
   private add(map: Map<string,number>, key: string, x: number) {
     map.set(key,map.get(key)+x);
   }
@@ -267,14 +287,6 @@ export class LogicService {
     if (condition) {
       this.inc(map,key);
     }
-  }
-
-  private day(i:number):string {
-    return i > 10 ? "day_"+i : "day_0"+i;
-  }
-
-  private game(i:number):string {
-    return "game_"+i;
   }
 
   private addNewPlayers(players: string[]) {
