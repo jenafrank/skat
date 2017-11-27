@@ -266,13 +266,23 @@ export class LogicService {
   totalday(data: any):number {
     let i:number = 1;
     while ( ! isUndefined(data[this.day(i)]) ) i++;
-    return i;
+    return i-1;
   }
 
   totalgame(data: any):number {
     let i:number = 1;
     while ( ! isUndefined(data[this.game(i)]) ) i++;
-    return i;
+    return i-1;
+  }
+
+  maxRoundFromDayData(data: any):number {
+    let N:number = this.totalgame(data);
+    let max:number = 0;
+    for (let i=1;i<=N;i++) {      
+      let cnt:number = data[this.game(i)].allPlayers.split(" ").length;
+      if (cnt > max) max = cnt;
+    }
+    return max;
   }
 
   private add(map: Map<string,number>, key: string, x: number) {
@@ -334,6 +344,17 @@ export interface GameData {
   kontra: string;
   mod: number;
   nrPlayers: number;
+  points: number;
+  time: string;
+}
+
+export interface GameDataRaw {
+  activeThree: string;
+  allPlayers: string;
+  declarer: string;
+  kontra: string;
+  mod: string;
+  nrPlayers: string;
   points: number;
   time: string;
 }
