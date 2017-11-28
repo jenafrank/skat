@@ -21,7 +21,7 @@ export class AppComponent implements OnInit{
     this.subscribeForAccumulation();
   }  
   
-  title = 'www.gutblatt.de';    
+  title = 'gutblatt.de';    
   
   constructor(
     private logic: LogicService,
@@ -32,6 +32,11 @@ export class AppComponent implements OnInit{
       this.logic.accumulateSeason(response);      
       this.logic.calculateDerivedQuantities();
     });
+  }
+
+  computedTitle() {
+    return this.dataService.alternativeTitle.length > 0 ?
+      this.dataService.alternativeTitle: this.title;
   }
 
   generateSeasonArray():void {

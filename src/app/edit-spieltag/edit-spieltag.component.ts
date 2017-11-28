@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
 import { DataService } from "../data.service";
 import { LogicService, GameData, GameDataRaw } from "../logic.service";
 import { MatTableDataSource } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
 import { isUndefined } from 'util';
 
 @Component({
@@ -17,24 +18,42 @@ export class EditSpieltagComponent implements OnInit {
   dataSource: any;
   spieltagData: any;  
   displayedColumns: string[];
+  players: string[];
+  roundPlayers: string[];
+  menuhelper: number;
+  selected: string;
 
   constructor(private route:ActivatedRoute,
     private dataService: DataService,
-    private logic: LogicService) { }
+    private logic: LogicService,
+    public dialog: MatDialog) { }
 
-  ngOnInit() {
-    this.spieltag = +this.route.snapshot.paramMap.get('id');
-    this.displayedColumns = ["nr","ply1","ply2","ply3","ply4","ply5","points","declarer"];
-
+  ngOnInit() {    
+    this.selected = "ADD";
+    this.menuhelper = -1;
+    this.roundPlayers=['⏤','⏤','⏤','⏤','⏤'];
+    this.players=['A','F','R','Ro','S','T','Od','P','⏤'];
+    this.spieltag = +this.route.snapshot.paramMap.get('id');    
+    this.dataService.alternativeTitle = "Spieltag " + this.spieltag;
     this.dataService.data.subscribe( (seasonData) => {
       this.spieltagData = seasonData[this.logic.day(this.spieltag)];
-      this.buildHeader();
-      this.buildGameArray();      
+      this.updateView();    
     })    
+  }
+
+  updateView() {
+    this.buildHeader();
+    this.buildGameArray();      
+  }
+
+  selectPlayer(el:string) {
+    this.roundPlayers[this.menuhelper]=el;
   }
 
   buildHeader(): void {
     let maxround:number = this.logic.maxRoundFromDayData(this.spieltagData);
+    this.displayedColumns = ["nr","ply1","ply2","ply3","ply4","ply5","points","declarer"];
+    
     if (maxround < 5 ) {
       this.displayedColumns.splice(this.displayedColumns.indexOf("ply5"),1);
     }
@@ -119,7 +138,11 @@ export class EditSpieltagComponent implements OnInit {
 
       this.games.push(view);
     }
-    console.log(this.games);
+    
+    if (this.selected == "ADD") {
+      this.games = this.games.reverse();
+    }
+
     this.dataSource = new MatTableDataSource(this.games);
   }
 
@@ -141,6 +164,9 @@ export class EditSpieltagComponent implements OnInit {
 
   selectRow(row) {
     console.log(row);    
+    if (this.selected == "ADD") {
+      this.openAdd();
+    }
   }
 
   rowMargin(row: GameView):boolean {    
@@ -149,6 +175,34 @@ export class EditSpieltagComponent implements OnInit {
 
   boldNames(element: GameView):boolean {
     return element.punkte == "";
+  }
+
+  openAdd(): void {
+    let dialogRef = this.dialog.open(EditSpieltagAdd, {
+      width: '250px',
+      data: { name: "some" }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      // this.animal = result;
+    });
+  }
+
+}
+
+@Component({
+  selector: 'edit-spieltag-add',
+  templateUrl: 'edit-spieltag-add.html',
+})
+export class EditSpieltagAdd {
+
+  constructor(
+    public dialogRef: MatDialogRef<EditSpieltagAdd>,
+    @Inject(MAT_DIALOG_DATA) public data: any) { }
+
+  onNoClick(): void {
+    this.dialogRef.close();
   }
 
 }
@@ -164,3 +218,4 @@ interface GameView {
   ply5:string,
   mod:number
 }
+

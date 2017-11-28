@@ -7,12 +7,14 @@ export class DataService {
 
   // Which data set is currently loaded? What is the maximumum season?
   currentSeason:number;
-  selectedSeason:number; 
+  selectedSeason:number;
+  alternativeTitle:string;
 
   // Fetched data object from Google Firebase
   data:Observable<any>;  
 
   constructor(private db: AngularFireDatabase) {
+    this.alternativeTitle = "";
     this.currentSeason = 26; 
     this.selectedSeason = 26;
     this.data = this.db.object(this.season(this.selectedSeason)).valueChanges();    
