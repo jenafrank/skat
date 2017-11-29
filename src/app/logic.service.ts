@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { isUndefined } from 'util';
+import { DataService } from "./data.service";
 
 @Injectable()
 export class LogicService {
@@ -44,7 +45,7 @@ export class LogicService {
   currentDay:number;
   currentTotalGame:number;
 
-  constructor() { 
+  constructor(private ds: DataService) { 
     this.initLabels();
     this.initColors();
     this.initBorders();
@@ -140,17 +141,17 @@ export class LogicService {
 
   accumulateSeason(data:any) {
     let i:number = 1;
-    while ( ! isUndefined(data[this.day(i)])) {
+    while ( ! isUndefined(data[this.ds.day(i)])) {
       this.currentDay = i;      
-      this.accumulateDay(data[this.day(i)]);      
+      this.accumulateDay(data[this.ds.day(i)]);      
       i++;
     }            
   }
 
   accumulateDay(data:any) {
     let i:number = 1;
-    while ( ! isUndefined(data[this.game(i)])) {
-      let gamedata:GameData = this.transformResponseToGameData(data[this.game(i)]);
+    while ( ! isUndefined(data[this.ds.game(i)])) {
+      let gamedata:GameData = this.transformResponseToGameData(data[this.ds.game(i)]);
       this.accumulate(gamedata);      
       i++;
     }    
@@ -255,31 +256,11 @@ export class LogicService {
     }
   }
 
-  day(i:number):string {
-    return i > 10 ? "day_"+i : "day_0"+i;
-  }
-
-  game(i:number):string {
-    return "game_"+i;
-  }
-
-  totalday(data: any):number {
-    let i:number = 1;
-    while ( ! isUndefined(data[this.day(i)]) ) i++;
-    return i-1;
-  }
-
-  totalgame(data: any):number {
-    let i:number = 1;
-    while ( ! isUndefined(data[this.game(i)]) ) i++;
-    return i-1;
-  }
-
   maxRoundFromDayData(data: any):number {
-    let N:number = this.totalgame(data);
+    let N:number = this.ds.totalgame(data);
     let max:number = 0;
     for (let i=1;i<=N;i++) {      
-      let cnt:number = data[this.game(i)].allPlayers.split(" ").length;
+      let cnt:number = data[this.ds.game(i)].allPlayers.split(" ").length;
       if (cnt > max) max = cnt;
     }
     return max;

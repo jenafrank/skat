@@ -19,8 +19,9 @@ export class EditComponent implements OnInit {
   ) { }
 
   ngOnInit() {    
-    this.dataService.data.subscribe( (seasonData:any) => {            
-      this.totaldays = this.logic.totalday(seasonData);
+    this.dataService.data.subscribe( (seasonData:any) => {
+      if (seasonData == null) return;            
+      this.totaldays = this.dataService.totalday(seasonData);
       this.days = (new Array(this.totaldays)).fill(1).map( (val,idx) => {
         return idx+1;
       })
@@ -29,5 +30,13 @@ export class EditComponent implements OnInit {
 
   goSpieltag(i:number) {
     this.router.navigate(['/edit/spieltag', i]);   
+  }
+
+  addDay() {
+    this.dataService.addSpieltag();
+  }
+
+  removeDay() {
+    this.dataService.removeSpieltag();    
   }
 }

@@ -142,6 +142,7 @@ export class PlotService {
               var meta = chartInstance.controller.getDatasetMeta(i);
               meta.data.forEach(function (bar, index) {
                 var data = dataset.data[index];                            
+                // TODO: If negative value: then add 5 and do not substract 5
                 ctx.fillText(data, bar._model.x, bar._model.y - 5);
               });
             });

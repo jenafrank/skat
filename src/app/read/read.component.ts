@@ -25,6 +25,9 @@ export class ReadComponent implements OnInit {
     this.currentPlotValue = this.labels.get(this.currentPlotKey);
 
     this.dataService.data.subscribe( response => {
+      if (response == null) return;
+      this.logic.accumulateSeason(response);      
+      this.logic.calculateDerivedQuantities();
       this.plot.barplot(this.currentPlotKey);
     });    
   }  

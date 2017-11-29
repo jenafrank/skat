@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
-import { AppComponent } from './app.component';
+import { AppComponent, AppSeasonAdd, AppSeasonRemove } from './app.component';
 import { environment } from "../environments/environment";
 import { AngularFireModule } from "angularfire2";
 import { AngularFireDatabaseModule } from "angularfire2/database";
@@ -23,6 +23,8 @@ import { MatTableModule } from '@angular/material/table';
 import { EditSpieltagComponent, EditSpieltagAdd } from './edit-spieltag/edit-spieltag.component';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 const appRoutes: Routes = [
   {
@@ -55,7 +57,9 @@ const appRoutes: Routes = [
     PagenotfoundComponent,
     ReadComponent,
     EditSpieltagComponent,
-    EditSpieltagAdd
+    EditSpieltagAdd,
+    AppSeasonAdd,
+    AppSeasonRemove
   ],
   imports: [
     RouterModule.forRoot(
@@ -77,9 +81,13 @@ const appRoutes: Routes = [
     FlexLayoutModule,
     MatTableModule,
     MatButtonToggleModule,
-    MatDialogModule],
+    MatDialogModule,
+    MatInputModule,
+    MatFormFieldModule],
   entryComponents: [
-    EditSpieltagAdd
+    EditSpieltagAdd,
+    AppSeasonAdd,
+    AppSeasonRemove
   ],
   providers: [AngularFireAuth],
   bootstrap: [AppComponent]

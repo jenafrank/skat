@@ -13,9 +13,15 @@
 
   <mat-menu #menu="matMenu">
     <mat-grid-list cols="5" gutterSize="3px">
-      <mat-grid-tile *ngFor="let el of seasons" style="background: light-blue" (click)="selectedSeason=el;">
-        <div style="cursor: pointer;font-weight: bold;font-family:Arial, Helvetica, sans-serif;">{{el}}</div>
+      <mat-grid-tile *ngFor="let el of seasons" (click)="loadSeason(el)">
+        <div>{{el}}</div>
       </mat-grid-tile>
+      <mat-grid-tile (click)="addSeason();" style="background:#99ff99">
+         <mat-icon>add</mat-icon>
+      </mat-grid-tile>
+      <mat-grid-tile (click)="removeSeason();" style="background:#ff7070">
+          <mat-icon>remove</mat-icon>
+       </mat-grid-tile>
     </mat-grid-list>
   </mat-menu>
 

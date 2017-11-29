@@ -36,7 +36,8 @@ export class EditSpieltagComponent implements OnInit {
     this.spieltag = +this.route.snapshot.paramMap.get('id');    
     this.dataService.alternativeTitle = "Spieltag " + this.spieltag;
     this.dataService.data.subscribe( (seasonData) => {
-      this.spieltagData = seasonData[this.logic.day(this.spieltag)];
+      if (seasonData == null) return;
+      this.spieltagData = seasonData[this.dataService.day(this.spieltag)];
       this.updateView();    
     })    
   }
@@ -63,7 +64,7 @@ export class EditSpieltagComponent implements OnInit {
   }
 
   buildGameArray():void {
-    let total:number = this.logic.totalgame(this.spieltagData);
+    let total:number = this.dataService.totalgame(this.spieltagData);
 
     this.games = [];   
 
@@ -77,7 +78,7 @@ export class EditSpieltagComponent implements OnInit {
 
     while (i < total) {
             
-      game = this.spieltagData[this.logic.game(i+1)];
+      game = this.spieltagData[this.dataService.game(i+1)];
       view = this.getEmptyView();      
 
       let allPlayersSignature:string = game.allPlayers;
