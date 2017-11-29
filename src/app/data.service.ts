@@ -122,12 +122,37 @@ export class DataService {
     ref.remove();
   }
 
-  addGame() {
+  addGame(data:any) {
+    let now:Date = new Date();
 
+    data["time"] = now.toLocaleString(); 
+    data.activeThree = data.activeThree.join(" ");
+    data.allPlayers = data.allPlayers.join(" ");
+    
+    let seasonStr:string = this.season(this.selectedSeason);
+    let spieltagStr:string = this.day(data.spieltag);
+    let gameStr:string = this.game(this.totalgame(this.currentData[spieltagStr])+1);
+
+    let objStr: string = seasonStr+"/"+spieltagStr+"/"+gameStr;
+
+    console.log(objStr);
+    console.log(data);
+
+    const ref = this.db.object(objStr);
+    ref.set(data);
   }
 
-  removeGame() {
+  removeGame(spieltag: number) {
 
+    let seasonStr:string = this.season(this.selectedSeason);
+    let spieltagStr:string = this.day(spieltag);
+    let gameStr:string = this.game(this.totalgame(this.currentData[spieltagStr]));
+    
+    let objStr: string = seasonStr+"/"+spieltagStr+"/"+gameStr;
+
+    const ref = this.db.object(objStr);
+    ref.remove();
+    
   }
 
   day(i:number):string {

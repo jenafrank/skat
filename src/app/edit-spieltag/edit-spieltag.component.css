@@ -24,7 +24,15 @@ mat-header-row {
 }
 
 mat-toolbar > button {
-    margin-left: 10px;
+    margin-left: 10px;    
     font-weight: bold;
     font-size: larger;
+}
+
+.second-toolbar {
+    height: 70px;
+}
+
+.dialogselected {
+    background: darkcyan !important;
 }

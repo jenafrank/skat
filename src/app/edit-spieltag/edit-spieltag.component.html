@@ -1,23 +1,13 @@
-<mat-toolbar>
-    <mat-form-field>
-      <mat-select placeholder="" [(value)]="selected">
-      <mat-option value="ADD" (click)="updateView()">
-        ADD
-      </mat-option>
-      <mat-option value="EDIT" (click)="updateView()">
-        EDIT
-      </mat-option>
-      <mat-option value="REMOVE" (click)="updateView()">
-        REMOVE
-      </mat-option>
-    </mat-select>
-      </mat-form-field>
+<mat-toolbar class="second-toolbar">
+  <button mat-fab color="primary" (click)="openAdd()"><mat-icon>add</mat-icon></button>
   <span class="example-spacer"></span>
   <button mat-fab [matMenuTriggerFor]="menu" (click)="menuhelper=0;">{{roundPlayers[0]}}</button>
   <button mat-fab [matMenuTriggerFor]="menu" (click)="menuhelper=1;">{{roundPlayers[1]}}</button>
   <button mat-fab [matMenuTriggerFor]="menu" (click)="menuhelper=2;">{{roundPlayers[2]}}</button>
   <button mat-fab [matMenuTriggerFor]="menu" (click)="menuhelper=3;">{{roundPlayers[3]}}</button>
   <button mat-fab [matMenuTriggerFor]="menu" (click)="menuhelper=4;">{{roundPlayers[4]}}</button>
+  <span class="example-spacer"></span>
+  <button mat-fab color="primary" (click)="toggleSort()"><mat-icon>sort</mat-icon></button>
 
   <mat-menu #menu="matMenu">
       <mat-grid-list cols="5" gutterSize="3px">
@@ -114,3 +104,6 @@
     </mat-table>
   </mat-card-content>
 </mat-card>
+<button mat-button (click)="removeLastGame()">Remove last game</button>
+
+

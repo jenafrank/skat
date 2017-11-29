@@ -22,6 +22,7 @@ export class EditSpieltagComponent implements OnInit {
   roundPlayers: string[];
   menuhelper: number;
   selected: string;
+  ascendingSort: boolean;
 
   constructor(private route:ActivatedRoute,
     private dataService: DataService,
@@ -29,10 +30,11 @@ export class EditSpieltagComponent implements OnInit {
     public dialog: MatDialog) { }
 
   ngOnInit() {    
+    this.ascendingSort = true;
     this.selected = "ADD";
     this.menuhelper = -1;
-    this.roundPlayers=['⏤','⏤','⏤','⏤','⏤'];
-    this.players=['A','F','R','Ro','S','T','Od','P','⏤'];
+    this.roundPlayers=['😶','😶','😶','😶','😶'];
+    this.players=['A','F','R','Ro','S','T','Od','P','😶'];
     this.spieltag = +this.route.snapshot.paramMap.get('id');    
     this.dataService.alternativeTitle = "Spieltag " + this.spieltag;
     this.dataService.data.subscribe( (seasonData) => {
@@ -140,11 +142,16 @@ export class EditSpieltagComponent implements OnInit {
       this.games.push(view);
     }
     
-    if (this.selected == "ADD") {
+    if (!this.ascendingSort) {
       this.games = this.games.reverse();
     }
 
     this.dataSource = new MatTableDataSource(this.games);
+  }
+
+  toggleSort():void {
+    this.ascendingSort = !this.ascendingSort;
+    this.updateView();
   }
 
   getEmptyView():GameView {
@@ -164,10 +171,8 @@ export class EditSpieltagComponent implements OnInit {
   }
 
   selectRow(row) {
-    console.log(row);    
-    if (this.selected == "ADD") {
-      this.openAdd();
-    }
+    console.log(row);
+    this.openEdit(row);        
   }
 
   rowMargin(row: GameView):boolean {    
@@ -178,16 +183,130 @@ export class EditSpieltagComponent implements OnInit {
     return element.punkte == "";
   }
 
+  openEdit(row:number): void {
+
+  }
+
+  filteredRoundPlayers(): string[] {
+    let filteredRoundPlayers:string[] = [];
+    for (let ply of this.roundPlayers) {
+      if (ply != '😶') {
+        filteredRoundPlayers.push(ply);
+      }
+    }
+    return filteredRoundPlayers;
+  }
+
+  incmod():number {
+    let filteredRoundPlayers: string[] = this.filteredRoundPlayers();
+    let nrPly:number = filteredRoundPlayers.length;
+    let maxGameNr:number = this.dataService.totalgame(this.spieltagData);
+    let gamedata: GameDataRaw = this.spieltagData[this.dataService.game(maxGameNr)];
+
+    if (gamedata == null) return 1;
+
+    let mod:number = +gamedata.mod;
+
+    if ( gamedata.allPlayers.split(" ").length != filteredRoundPlayers.length ) {
+      return 1;
+    }
+    
+    mod++;
+    if (mod > nrPly) mod =1;
+
+    return mod;    
+  }
+
+  calcActiveThree(): string[] {
+    
+    let filteredRoundPlayers: string[] = this.filteredRoundPlayers();
+
+    let nrPly:number = filteredRoundPlayers.length;
+
+    if (nrPly < 3) return null;
+
+    if (nrPly == 3) {
+      return filteredRoundPlayers;
+    } 
+
+    let maxGameNr:number = this.dataService.totalgame(this.spieltagData);
+    let gamedata: GameDataRaw = this.spieltagData[this.dataService.game(maxGameNr)];
+
+    if (gamedata == null) { 
+      console.log("Something wrong with game data...");      
+      return null;
+    }
+
+    let mod:number = this.incmod();
+
+    if (nrPly == 4) {
+      let p1:string = filteredRoundPlayers[0];
+      let p2:string = filteredRoundPlayers[1];
+      let p3:string = filteredRoundPlayers[2];
+      let p4:string = filteredRoundPlayers[3];
+      
+      if (mod == 1) return [p2,p3,p4];
+      if (mod == 2) return [p3,p4,p1];
+      if (mod == 3) return [p4,p1,p2];
+      if (mod == 4) return [p1,p2,p3];
+    }
+
+    if (nrPly == 5) {
+      let p1:string = filteredRoundPlayers[0];
+      let p2:string = filteredRoundPlayers[1];
+      let p3:string = filteredRoundPlayers[2];
+      let p4:string = filteredRoundPlayers[3];
+      let p5:string = filteredRoundPlayers[4];
+      
+      if (mod == 1) return [p2,p3,p5];
+      if (mod == 2) return [p3,p4,p1];
+      if (mod == 3) return [p4,p5,p2];
+      if (mod == 4) return [p5,p1,p3];
+      if (mod == 5) return [p1,p2,p4];
+    }
+
+    console.log("Ups, that shouldn't happen");
+    return null;
+    
+  }
+
   openAdd(): void {
+
+    let activeThree:string[] = this.calcActiveThree();
+    let mod:number = this.incmod();
+
+    if (activeThree ==  null) {
+      console.log("ERR IN ACTIVE THREE");
+      return;
+    }
+    
+    let data:Object = {
+      activeThree: activeThree,
+      allPlayers: this.filteredRoundPlayers(),
+      declarer: "E",
+      points: 0,
+      spieltag: this.spieltag,
+      mod: mod
+    }
+
     let dialogRef = this.dialog.open(EditSpieltagAdd, {
-      width: '250px',
-      data: { name: "some" }
+      width: '450px',
+      data: data
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-      // this.animal = result;
+    dialogRef.afterClosed().subscribe((ok:boolean) => {
+      
+      if (!ok) return;
+      
+      console.log('The dialog was closed');  
+      console.log(data);    
+      
+      this.dataService.addGame(data);
     });
+  }
+
+  removeLastGame():void {
+    this.dataService.removeGame(this.spieltag);
   }
 
 }
@@ -195,15 +314,43 @@ export class EditSpieltagComponent implements OnInit {
 @Component({
   selector: 'edit-spieltag-add',
   templateUrl: 'edit-spieltag-add.html',
+  styleUrls: ['./edit-spieltag.component.css'] 
 })
 export class EditSpieltagAdd {
 
+  points: number[];
+
   constructor(
     public dialogRef: MatDialogRef<EditSpieltagAdd>,
-    @Inject(MAT_DIALOG_DATA) public data: any) { }
+    @Inject(MAT_DIALOG_DATA) public data: any) { 
+      this.points = [18,20,22,24,48,72,96,120];
+    }
 
   onNoClick(): void {
-    this.dialogRef.close();
+    this.dialogRef.close(false);
+  }
+
+  toggle(ply): void {
+    let isActive:boolean = this.data.activeThree.indexOf(ply) !== -1;
+    if (isActive) {
+      this.data.activeThree.splice(this.data.activeThree.indexOf(ply),1);
+    } else {
+      this.data.activeThree.push(ply);
+    }
+  }
+
+  togglePly(ply): void {
+    this.data.declarer = (this.data.declarer != ply) ? ply : "E";
+    if (this.data.declarer == 'E') this.data.points = 0;
+  }
+
+  ok():boolean {
+
+    if (this.data.activeThree.length != 3) return false;
+    if (this.data.activeThree.indexOf(this.data.declarer) == -1 && this.data.declarer != 'E') return false;
+    if (this.data.points == 0 && this.data.declarer != 'E') return false;
+
+    return true;
   }
 
 }
