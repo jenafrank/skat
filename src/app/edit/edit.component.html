@@ -8,10 +8,10 @@
           <mat-grid-tile *ngFor="let i of days" (click)="goSpieltag(i)">
             <span class="spieltag"> {{i}} </span>
             </mat-grid-tile>            
-       <mat-grid-tile (click)="addDay();" style="background:#99ff99">
+       <mat-grid-tile *ngIf="auth.user() !== null" (click)="addDay();" style="background:#99ff99">
           <mat-icon>add</mat-icon>
        </mat-grid-tile>
-       <mat-grid-tile (click)="removeDay();" style="background:#ff7070">
+       <mat-grid-tile *ngIf="auth.user() !== null" (click)="removeDay();" style="background:#ff7070">
            <mat-icon>remove</mat-icon>
         </mat-grid-tile>  
       </mat-grid-list>       

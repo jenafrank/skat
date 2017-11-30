@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { DataService } from "../data.service";
 import { LogicService } from "../logic.service";
 import { Router } from "@angular/router";
+import { Subscription } from 'rxjs/Subscription';
+import { AuthenticationService } from "../authentication.service";
 
 @Component({
   selector: 'app-edit',
@@ -12,14 +14,19 @@ export class EditComponent implements OnInit {
 
   totaldays: number;
   days: number[];
+
+  subscription: Subscription;
   
   constructor(private dataService: DataService,
    private logic: LogicService,
-   private router: Router
+   private router: Router,
+   private auth: AuthenticationService
   ) { }
 
   ngOnInit() {    
-    this.dataService.data.subscribe( (seasonData:any) => {
+    this.dataService.selectedSeason = this.dataService.currentSeason;
+    this.dataService.setSeason();
+    this.subscription = this.dataService.data.subscribe( (seasonData:any) => {
       if (seasonData == null) return;            
       this.totaldays = this.dataService.totalday(seasonData);
       this.days = (new Array(this.totaldays)).fill(1).map( (val,idx) => {
@@ -27,6 +34,10 @@ export class EditComponent implements OnInit {
       })
     });
   }  
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
 
   goSpieltag(i:number) {
     this.router.navigate(['/edit/spieltag', i]);   

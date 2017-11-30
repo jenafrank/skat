@@ -1,17 +1,25 @@
 import { Component, OnInit, Inject } from '@angular/core';
+import { Router } from "@angular/router";
 import { Observable } from 'rxjs/Observable';
 
 import { LogicService } from "./logic.service";
 import { PlotService } from './plot.service';
 import { DataService } from "./data.service";
 import { AuthenticationService } from './authentication.service';
+import { GlobalService } from "./global.service";
 
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
 import { isUndefined } from 'util';
 
 @Component({
   selector: 'app-root',
-  providers: [ LogicService, PlotService, DataService, AuthenticationService ],
+  providers: [ 
+    LogicService, 
+    PlotService, 
+    DataService, 
+    AuthenticationService, 
+    GlobalService 
+  ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
@@ -21,6 +29,7 @@ export class AppComponent implements OnInit{
    
   ngOnInit(): void {      
     this.generateSeasonArray();    
+    console.log(this.auth);
   }  
   
   title = 'gutblatt.de';    
@@ -28,11 +37,31 @@ export class AppComponent implements OnInit{
   constructor(
     private logic: LogicService,
     private dataService: DataService,
-    public dialog: MatDialog) {}
+    public dialog: MatDialog,
+    private router: Router,
+    private global: GlobalService,
+    private auth: AuthenticationService) {}
+
+  goUpState() {
+    console.log(this.router.url);
+    if (this.router.url.startsWith("/edit/spieltag"))  {
+      this.router.navigate(['/edit']); 
+    } else if (this.router.url.startsWith("/edit")) {
+      this.router.navigate(['/read']); 
+    }      
+  }
+
+  shouldShowBackButton() {
+    if (this.router.url == "/read" || this.router.url == "/") {
+      return false;
+    }
+
+    return true;
+  }
 
   computedTitle() {
-    return this.dataService.alternativeTitle.length > 0 ?
-      this.dataService.alternativeTitle: this.title;
+    return this.dataService.alternativeTitle == null || this.dataService.alternativeTitle.length == 0 ?
+      this.title: this.dataService.alternativeTitle;
   }
 
   generateSeasonArray():void {

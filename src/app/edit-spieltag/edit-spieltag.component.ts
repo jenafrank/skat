@@ -1,10 +1,12 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
 import { DataService } from "../data.service";
 import { LogicService, GameData, GameDataRaw } from "../logic.service";
 import { MatTableDataSource } from '@angular/material';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
 import { isUndefined } from 'util';
+import { Subscription } from 'rxjs/Subscription';
+import { AuthenticationService } from "../authentication.service";
 
 @Component({
   selector: 'app-edit-spieltag',
@@ -24,10 +26,13 @@ export class EditSpieltagComponent implements OnInit {
   selected: string;
   ascendingSort: boolean;
 
+  subscription: Subscription;
+
   constructor(private route:ActivatedRoute,
     private dataService: DataService,
     private logic: LogicService,
-    public dialog: MatDialog) { }
+    public dialog: MatDialog,
+    private auth: AuthenticationService) { }
 
   ngOnInit() {    
     this.ascendingSort = true;
@@ -37,11 +42,16 @@ export class EditSpieltagComponent implements OnInit {
     this.players=['A','F','R','Ro','S','T','Od','P','😶'];
     this.spieltag = +this.route.snapshot.paramMap.get('id');    
     this.dataService.alternativeTitle = "Spieltag " + this.spieltag;
-    this.dataService.data.subscribe( (seasonData) => {
+    this.subscription = this.dataService.data.subscribe( (seasonData) => {
       if (seasonData == null) return;
       this.spieltagData = seasonData[this.dataService.day(this.spieltag)];
       this.updateView();    
     })    
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+    this.dataService.alternativeTitle = null;
   }
 
   updateView() {
@@ -171,6 +181,7 @@ export class EditSpieltagComponent implements OnInit {
   }
 
   selectRow(row) {
+    if (this.auth.user() === null) return;
     console.log(row);
     this.openEdit(row);        
   }
@@ -234,7 +245,7 @@ export class EditSpieltagComponent implements OnInit {
 
     if (gamedata == null) { 
       console.log("Something wrong with game data...");      
-      return null;
+      console.log("First game of spieltag maybe...");      
     }
 
     let mod:number = this.incmod();
@@ -272,6 +283,10 @@ export class EditSpieltagComponent implements OnInit {
 
   openAdd(): void {
 
+    if (this.dataService.selectedSeason != this.dataService.currentSeason) {
+      return;
+    }
+
     let activeThree:string[] = this.calcActiveThree();
     let mod:number = this.incmod();
 
@@ -306,6 +321,11 @@ export class EditSpieltagComponent implements OnInit {
   }
 
   removeLastGame():void {
+
+    if (this.dataService.selectedSeason != this.dataService.currentSeason) {
+      return;
+    }
+
     this.dataService.removeGame(this.spieltag);
   }
 

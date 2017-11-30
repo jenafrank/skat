@@ -23,7 +23,7 @@ export class DataService {
     this.data = new BehaviorSubject(null);
     this.alternativeTitle = "";
     this.currentSeason = 27; 
-    this.selectedSeason = 26;
+    this.selectedSeason = 27;
     this.setSeason();
   }
 

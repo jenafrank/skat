@@ -25,6 +25,7 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 const appRoutes: Routes = [
   {
@@ -83,7 +84,8 @@ const appRoutes: Routes = [
     MatButtonToggleModule,
     MatDialogModule,
     MatInputModule,
-    MatFormFieldModule],
+    MatFormFieldModule,
+    MatTooltipModule],
   entryComponents: [
     EditSpieltagAdd,
     AppSeasonAdd,

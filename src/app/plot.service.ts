@@ -7,8 +7,10 @@ import Chart from "chart.js";
 export class PlotService {
   
   myChart: Chart;
+  ctx: HTMLElement; 
 
-  constructor(private logic:LogicService) {}
+  constructor(private logic:LogicService) {    
+  }
 
   // specific fill colors for each player
   colorsFromNames(names:string[]):string[] {
@@ -96,10 +98,8 @@ export class PlotService {
 
     values = this.postProcessNumbers(key,values);
 
-    var ctx = document.getElementById("myChart");
-    
     if ( ! isUndefined(this.myChart)) this.myChart.destroy();
-    this.myChart = new Chart(ctx, {
+    this.myChart = new Chart(this.ctx, {
       type: 'bar',
       data: {
         labels: labels,

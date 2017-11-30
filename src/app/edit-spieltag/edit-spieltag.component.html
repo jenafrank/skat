@@ -1,13 +1,13 @@
-<mat-toolbar class="second-toolbar">
+<mat-toolbar *ngIf="auth.user() !== null" class="second-toolbar">
   <button mat-fab color="primary" (click)="openAdd()"><mat-icon>add</mat-icon></button>
   <span class="example-spacer"></span>
-  <button mat-fab [matMenuTriggerFor]="menu" (click)="menuhelper=0;">{{roundPlayers[0]}}</button>
-  <button mat-fab [matMenuTriggerFor]="menu" (click)="menuhelper=1;">{{roundPlayers[1]}}</button>
-  <button mat-fab [matMenuTriggerFor]="menu" (click)="menuhelper=2;">{{roundPlayers[2]}}</button>
-  <button mat-fab [matMenuTriggerFor]="menu" (click)="menuhelper=3;">{{roundPlayers[3]}}</button>
-  <button mat-fab [matMenuTriggerFor]="menu" (click)="menuhelper=4;">{{roundPlayers[4]}}</button>
+  <button mat-mini-fab [matMenuTriggerFor]="menu" (click)="menuhelper=0;">{{roundPlayers[0]}}</button>
+  <button mat-mini-fab [matMenuTriggerFor]="menu" (click)="menuhelper=1;">{{roundPlayers[1]}}</button>
+  <button mat-mini-fab [matMenuTriggerFor]="menu" (click)="menuhelper=2;">{{roundPlayers[2]}}</button>
+  <button mat-mini-fab *ngIf="filteredRoundPlayers().length > 2" [matMenuTriggerFor]="menu" (click)="menuhelper=3;">{{roundPlayers[3]}}</button>
+  <button mat-mini-fab *ngIf="filteredRoundPlayers().length > 3" [matMenuTriggerFor]="menu" (click)="menuhelper=4;">{{roundPlayers[4]}}</button>
   <span class="example-spacer"></span>
-  <button mat-fab color="primary" (click)="toggleSort()"><mat-icon>sort</mat-icon></button>
+  <button mat-mini-fab color="primary" (click)="toggleSort()"><mat-icon>sort</mat-icon></button>
 
   <mat-menu #menu="matMenu">
       <mat-grid-list cols="5" gutterSize="3px">
@@ -104,6 +104,7 @@
     </mat-table>
   </mat-card-content>
 </mat-card>
-<button mat-button (click)="removeLastGame()">Remove last game</button>
-
+<div *ngIf="auth.user() !== null" style="margin-top: 100px;">
+<button mat-raised-button color="warn" (click)="removeLastGame()">Remove last game</button>
+</div>
 

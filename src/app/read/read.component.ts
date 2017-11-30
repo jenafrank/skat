@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { LogicService, GameData } from "../logic.service";
 import { Router } from "@angular/router";
 import { PlotService } from "../plot.service";
 import { DataService } from "../data.service";
+import { GlobalService } from "../global.service";
 import { AuthenticationService } from "../authentication.service";
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-read',
@@ -11,26 +13,41 @@ import { AuthenticationService } from "../authentication.service";
   templateUrl: './read.component.html',
   styleUrls: ['./read.component.css']
 })
-export class ReadComponent implements OnInit {
+export class ReadComponent implements OnInit,OnDestroy {
 
   currentPlotKey:string;
   currentPlotValue:string;
   labels:Map<string, string>;
   labelkeys:string[];
+  sideNavOpened: boolean;
+
   
+  subscription: Subscription;
+    
   ngOnInit(): void {
+    this.sideNavOpened = false;
+    this.global.toolbarMenufct = () => { this.sideNavOpened = !this.sideNavOpened };
+    this.dataService.setSeason();   
     this.labels = this.logic.labels;
     this.labelkeys = Array.from(this.labels.keys());
     this.currentPlotKey = "Echte Punkte";
     this.currentPlotValue = this.labels.get(this.currentPlotKey);
+  }  
 
-    this.dataService.data.subscribe( response => {
-      if (response == null) return;
+  ngAfterViewInit() {
+    this.subscription = this.dataService.data.subscribe( response => {
+      if (response == null) return;            
+      this.logic.reset();
       this.logic.accumulateSeason(response);      
       this.logic.calculateDerivedQuantities();
+      this.plot.ctx = document.getElementById("myChart");
       this.plot.barplot(this.currentPlotKey);
-    });    
-  }  
+    });  
+  }
+
+  ngOnDestroy():void {
+    this.subscription.unsubscribe();
+  }
   
   title = 'www.gutblatt.de';    
   
@@ -39,7 +56,8 @@ export class ReadComponent implements OnInit {
     private router: Router,
     private plot: PlotService,
     private dataService: DataService,
-    private auth: AuthenticationService) {}
+    private auth: AuthenticationService,
+    private global: GlobalService) {}
 
   goEdit():void {
     this.router.navigate(['/edit']);

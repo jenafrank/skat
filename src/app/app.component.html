@@ -2,13 +2,21 @@
 
 <mat-toolbar color="primary">
 
-  <span>{{computedTitle()}}</span>
+  <button mat-icon-button *ngIf="shouldShowBackButton()" (click)="goUpState();"><mat-icon>arrow_back</mat-icon></button>
+  <button mat-icon-button *ngIf="!shouldShowBackButton()" (click)="global.toolbarMenufct();"><mat-icon>menu</mat-icon></button>
+
+  <span style="margin-left:10px;">{{computedTitle()}}</span>
 
 
   <span class="example-spacer"></span>
 
-  <button mat-raised-button [matMenuTriggerFor]="menu" color="primary">
-    {{generateItemString(dataService.selectedSeason)}}
+  <button mat-icon-button *ngIf="auth.user() === null" (click)="auth.login();"><mat-icon>face</mat-icon></button>
+  <button [matTooltip]="'Eingeloggt als ' + auth.username() + ' unter Uid ' + auth.uid()" mat-icon-button *ngIf="auth.user() !== null" (click)="auth.logout();"><mat-icon>stop</mat-icon></button>
+
+  <span class="example-spacer"></span>
+
+  <button [matTooltip]="'Die '+dataService.selectedSeason+'. Saison ist aktiviert.'" mat-mini-fab [matMenuTriggerFor]="menu" color="primary">
+    {{dataService.selectedSeason}}
   </button>
 
   <mat-menu #menu="matMenu">
@@ -16,10 +24,10 @@
       <mat-grid-tile *ngFor="let el of seasons" (click)="loadSeason(el)">
         <div>{{el}}</div>
       </mat-grid-tile>
-      <mat-grid-tile (click)="addSeason();" style="background:#99ff99">
+      <mat-grid-tile *ngIf="auth.user() !== null" (click)="addSeason();" style="background:#99ff99">
          <mat-icon>add</mat-icon>
       </mat-grid-tile>
-      <mat-grid-tile (click)="removeSeason();" style="background:#ff7070">
+      <mat-grid-tile *ngIf="auth.user() !== null" (click)="removeSeason();" style="background:#ff7070">
           <mat-icon>remove</mat-icon>
        </mat-grid-tile>
     </mat-grid-list>

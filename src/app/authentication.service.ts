@@ -27,4 +27,12 @@ export class AuthenticationService {
     return this.afAuth.auth.currentUser.displayName;
   }
 
+  email(): string {
+    return this.afAuth.auth.currentUser.email;
+  }
+
+  uid(): string {
+    return this.afAuth.auth.currentUser.uid;
+  }
+
 }

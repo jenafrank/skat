@@ -5,3 +5,10 @@ mat-grid-tile {
     font-family: Arial, Helvetica, sans-serif;
 }
 
+::ng-deep .mat-tooltip {
+    /* your own custom styles here */ 
+    /* e.g. */
+    color: white;
+    background: rgba(0,0,0,0.7);
+    font-size: small;
+}
