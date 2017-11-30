@@ -10,14 +10,24 @@
 
   <span class="example-spacer"></span>
 
-  <button mat-icon-button *ngIf="auth.user() === null" (click)="auth.login();"><mat-icon>face</mat-icon></button>
-  <button [matTooltip]="'Eingeloggt als ' + auth.username() + ' unter Uid ' + auth.uid()" mat-icon-button *ngIf="auth.user() !== null" (click)="auth.logout();"><mat-icon>stop</mat-icon></button>
+  <button [matTooltip]="'Die '+dataService.selectedSeason+'. Saison ist ausgewählt.'" 
+          mat-button 
+          [matMenuTriggerFor]="menu" 
+          style="font-size: larger;min-width: 55px;color: #adfda4;"
+          >
 
-  <span class="example-spacer"></span>
-
-  <button [matTooltip]="'Die '+dataService.selectedSeason+'. Saison ist aktiviert.'" mat-mini-fab [matMenuTriggerFor]="menu" color="primary">
-    {{dataService.selectedSeason}}
+      <b>{{dataService.selectedSeason}}</b>
+      
   </button>
+
+  <button mat-icon-button 
+          *ngIf="auth.user() === null" 
+          (click)="auth.login();">
+          <mat-icon>face</mat-icon></button>
+  <button [matTooltip]="'Eingeloggt als ' + auth.username() + ' unter Uid ' + auth.uid()" 
+          mat-icon-button
+          *ngIf="auth.user() !== null" 
+          (click)="auth.logout();"><mat-icon>stop</mat-icon></button>
 
   <mat-menu #menu="matMenu">
     <mat-grid-list cols="5" gutterSize="3px">
