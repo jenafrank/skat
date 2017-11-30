@@ -32,7 +32,7 @@ export class EditSpieltagComponent implements OnInit {
     private dataService: DataService,
     private logic: LogicService,
     public dialog: MatDialog,
-    private auth: AuthenticationService) { }
+    public auth: AuthenticationService) { }
 
   ngOnInit() {    
     this.ascendingSort = true;

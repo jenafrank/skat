@@ -20,7 +20,7 @@ export class EditComponent implements OnInit {
   constructor(private dataService: DataService,
    private logic: LogicService,
    private router: Router,
-   private auth: AuthenticationService
+   public auth: AuthenticationService
   ) { }
 
   ngOnInit() {    

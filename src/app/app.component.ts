@@ -36,11 +36,11 @@ export class AppComponent implements OnInit{
   
   constructor(
     private logic: LogicService,
-    private dataService: DataService,
+    public dataService: DataService,
     public dialog: MatDialog,
     private router: Router,
     private global: GlobalService,
-    private auth: AuthenticationService) {}
+    public auth: AuthenticationService) {}
 
   goUpState() {
     console.log(this.router.url);
