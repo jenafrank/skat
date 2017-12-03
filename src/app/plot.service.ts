@@ -49,42 +49,7 @@ export class PlotService {
 
   // sort the logic data to show the best leftmost, the worst righmost (bar plot)
   getSortedMapForBarPlot(mapkey:string):Map<string, number> {
-    
-    // invert map
-    let map: Map<string,number>;
-    map = this.logic[this.logic.labels.get(mapkey)];
-    
-    let invMap: Map<number, string[]>;
-    invMap = new Map();
-    
-    let pnts: number[];
-    pnts = [];
-
-    for (let ky of Array.from(map.keys())) {
-      let arr:string[] = invMap.get(map.get(ky));
-      if ( isUndefined(arr) ) {
-        invMap.set(map.get(ky),[ky]);
-      } else {        
-        arr.push(ky);
-      }
-      pnts.push(map.get(ky));
-    }
-
-    // sort points
-    pnts = pnts.sort((n1,n2) => n2 - n1);
-
-    // return according names
-    let newmap: Map<string,number>;
-    newmap = new Map();
-
-    for (let x of pnts) {
-      let arr:string[] = invMap.get(x);
-      for (let str of arr) {        
-        newmap.set(str,x);
-      }      
-    }
-
-    return newmap;
+    return this.logic.sortMap(this.logic[this.logic.labels.get(mapkey)]);    
   }
 
   // bar plot

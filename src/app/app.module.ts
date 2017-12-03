@@ -26,6 +26,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { SpieltagTableComponent } from './spieltag-table/spieltag-table.component';
+import { MatTabsModule } from '@angular/material/tabs';
 
 const appRoutes: Routes = [
   {
@@ -60,7 +62,8 @@ const appRoutes: Routes = [
     EditSpieltagComponent,
     EditSpieltagAdd,
     AppSeasonAdd,
-    AppSeasonRemove
+    AppSeasonRemove,
+    SpieltagTableComponent
   ],
   imports: [
     RouterModule.forRoot(
@@ -85,7 +88,8 @@ const appRoutes: Routes = [
     MatDialogModule,
     MatInputModule,
     MatFormFieldModule,
-    MatTooltipModule],
+    MatTooltipModule,
+    MatTabsModule],
   entryComponents: [
     EditSpieltagAdd,
     AppSeasonAdd,

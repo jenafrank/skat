@@ -7,6 +7,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
 import { isUndefined } from 'util';
 import { Subscription } from 'rxjs/Subscription';
 import { AuthenticationService } from "../authentication.service";
+import { GameView } from "../spieltag-table/spieltag-table.component"
 
 @Component({
   selector: 'app-edit-spieltag',
@@ -17,7 +18,11 @@ export class EditSpieltagComponent implements OnInit {
 
   spieltag: number;
   games: GameView[];
+  
   dataSource: any;
+  dataSource2: any;
+  dataSource3: any;
+  
   spieltagData: any;  
   displayedColumns: string[];
   players: string[];
@@ -25,6 +30,7 @@ export class EditSpieltagComponent implements OnInit {
   menuhelper: number;
   selected: string;
   ascendingSort: boolean;
+  spieltagAcc: [string,number][];
 
   subscription: Subscription;
 
@@ -125,7 +131,9 @@ export class EditSpieltagComponent implements OnInit {
         view.spieler = game.declarer;
         view.mod = +game.mod;
 
-        pnts.set(game.declarer, pnts.get(game.declarer) + +game.points);
+        if (game.declarer != 'E') {
+          pnts.set(game.declarer, pnts.get(game.declarer) + +game.points);
+        }
 
         let splittedActive = game.activeThree.split(" ");
         
@@ -156,7 +164,8 @@ export class EditSpieltagComponent implements OnInit {
       this.games = this.games.reverse();
     }
 
-    this.dataSource = new MatTableDataSource(this.games);
+    this.dataSource = new MatTableDataSource(this.games);        
+    this.spieltagAcc = Array.from(this.logic.sortMap(pnts));
   }
 
   toggleSort():void {
@@ -178,20 +187,6 @@ export class EditSpieltagComponent implements OnInit {
     ret.mod=0;
 
     return ret;
-  }
-
-  selectRow(row) {
-    if (this.auth.user() === null) return;
-    console.log(row);
-    this.openEdit(row);        
-  }
-
-  rowMargin(row: GameView):boolean {    
-    return row.mod == 1;
-  }
-
-  boldNames(element: GameView):boolean {
-    return element.punkte == "";
   }
 
   openEdit(row:number): void {
@@ -375,15 +370,5 @@ export class EditSpieltagAdd {
 
 }
 
-interface GameView {
-  nr:string,
-  spieler:string,
-  punkte:string,
-  ply1:string,
-  ply2:string,
-  ply3:string,
-  ply4:string,
-  ply5:string,
-  mod:number
-}
+
 

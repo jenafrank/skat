@@ -19,91 +19,38 @@
 
 </mat-toolbar>
 
-<mat-card>  
-  <mat-card-content>
-    <mat-table #table [dataSource]="dataSource">
+<mat-tab-group>
+  <mat-tab label="Klassement">
+    <mat-card >      
+      <mat-grid-list cols="5" gutterSize="3px">
+          <ng-container *ngFor="let elm of spieltagAcc as array; index as i;">
+            <mat-grid-tile [ngClass]="{'firstPlace first' : i == 0 }">{{i+1}}.</mat-grid-tile>
+            <mat-grid-tile [ngClass]="{'firstPlaceName first' : i == 0 }" style="font-weight:bold;"> {{elm[0]}} </mat-grid-tile>
+            <mat-grid-tile [ngClass]="{'firstPlacePoints first' : i == 0 }" style="font-weight:bold;"> {{elm[1]}} </mat-grid-tile>
+            <mat-grid-tile [ngClass]="{'first' : i == 0 }"> 
+              <span *ngIf="i > 0"> - </span>
+              {{i > 0 ? array[0][1] - elm[1] : ''}}
+            </mat-grid-tile>
+            <mat-grid-tile [ngClass]="{'first' : i == 0 }"> 
+              <mat-icon *ngIf="i > 0">call_made</mat-icon>
+              {{i > 0 ? array[i-1][1] - elm[1] : ''}}
+            </mat-grid-tile>
+          </ng-container>          
+        </mat-grid-list>
+    </mat-card>
+  </mat-tab>
+  <mat-tab label="R1">
+    <app-spieltag-table [dataSource]="dataSource" [displayedColumns]="displayedColumns"></app-spieltag-table>
+  </mat-tab>
+  <mat-tab label="R2">
+      <app-spieltag-table [dataSource]="dataSource" [displayedColumns]="displayedColumns"></app-spieltag-table>
+  </mat-tab>
+  <mat-tab label="R3">
+      <app-spieltag-table [dataSource]="dataSource" [displayedColumns]="displayedColumns"></app-spieltag-table>
+  </mat-tab>
+</mat-tab-group>
 
-      <!-- Declarer Column -->
-      <ng-container matColumnDef="declarer">
-        <mat-header-cell *matHeaderCellDef> </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="fixedColWidth">
-          {{element.spieler}}
-        </mat-cell>
-      </ng-container>
 
-      <!-- Points Column -->
-      <ng-container matColumnDef="points">
-        <mat-header-cell *matHeaderCellDef> </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="fixedColWidth">
-          {{element.punkte}}
-        </mat-cell>
-      </ng-container>
-
-      <!-- Nr Column -->
-      <ng-container matColumnDef="nr">
-        <mat-header-cell *matHeaderCellDef> # </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-          <span style="font-size:smaller;">{{element.nr}}</span>
-        </mat-cell>
-      </ng-container>
-
-      <!-- Ply 1 -->
-      <ng-container matColumnDef="ply1">
-        <mat-header-cell *matHeaderCellDef> </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-          <span [ngClass]="{'boldNames': boldNames(element)}"> {{element.ply1}}
-          </span>
-        </mat-cell>
-      </ng-container>
-
-      <!-- Ply 2 -->
-      <ng-container matColumnDef="ply2">
-        <mat-header-cell *matHeaderCellDef> </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-          <span [ngClass]="{'boldNames': boldNames(element)}"> {{element.ply2}}
-          </span>
-        </mat-cell>
-      </ng-container>
-
-      <!-- Ply 3 -->
-      <ng-container matColumnDef="ply3">
-        <mat-header-cell *matHeaderCellDef> </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-          <span [ngClass]="{'boldNames': boldNames(element)}"> {{element.ply3}}
-          </span>
-        </mat-cell>
-      </ng-container>
-
-      <!-- Ply 4 -->
-      <ng-container matColumnDef="ply4">
-        <mat-header-cell *matHeaderCellDef> </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-          <span [ngClass]="{'boldNames': boldNames(element)}"> {{element.ply4}}
-          </span>
-        </mat-cell>
-      </ng-container>
-
-      <!-- Ply 5 -->
-      <ng-container matColumnDef="ply5">
-        <mat-header-cell *matHeaderCellDef> </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-          <span [ngClass]="{'boldNames': boldNames(element)}"> {{element.ply5}}
-          </span>
-        </mat-cell>
-      </ng-container>
-
-      <!-- Interaktion -->
-      <ng-container matColumnDef="edit">
-        <mat-header-cell *matHeaderCellDef> # </mat-header-cell>
-        <mat-cell *matCellDef="let element"> EDIT </mat-cell>
-      </ng-container>
-
-      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;" class="rowStyle" (click)="selectRow(row)" [ngClass]="{'rowMargin': rowMargin(row), 'marginNames': boldNames(row) }">
-      </mat-row>
-    </mat-table>
-  </mat-card-content>
-</mat-card>
 <div *ngIf="auth.user() !== null" style="margin-top: 100px;">
 <button mat-raised-button color="warn" (click)="removeLastGame()">Remove last game</button>
 </div>
