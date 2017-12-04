@@ -21,17 +21,18 @@
 
 <mat-tab-group>
   <mat-tab label="Klassement">
-    <mat-card >      
-      <mat-grid-list cols="5" gutterSize="3px">
+    <mat-card >            
+      <mat-grid-list cols="5" gutterSize="3px" rowHeight="80px">
           <ng-container *ngFor="let elm of spieltagAcc as array; index as i;">
-            <mat-grid-tile [ngClass]="{'firstPlace first' : i == 0 }">{{i+1}}.</mat-grid-tile>
-            <mat-grid-tile [ngClass]="{'firstPlaceName first' : i == 0 }" style="font-weight:bold;"> {{elm[0]}} </mat-grid-tile>
-            <mat-grid-tile [ngClass]="{'firstPlacePoints first' : i == 0 }" style="font-weight:bold;"> {{elm[1]}} </mat-grid-tile>
-            <mat-grid-tile [ngClass]="{'first' : i == 0 }"> 
+            <mat-grid-tile 
+            [ngClass]="{'firstPlace first' : i == 0, 'otherPlace other' : i > 0 }">{{i+1}}.</mat-grid-tile>
+            <mat-grid-tile [ngClass]="{'firstPlaceName first' : i == 0, 'otherPlaceName other' : i > 0 }" style="font-weight:bold;"> {{elm[0]}} </mat-grid-tile>
+            <mat-grid-tile [ngClass]="{'firstPlacePoints first' : i == 0, 'otherPlacePoints other' : i > 0 }" style="font-weight:bold;"> {{elm[1]}} </mat-grid-tile>
+            <mat-grid-tile [ngClass]="{'first' : i == 0, 'other' : i > 0 }"> 
               <span *ngIf="i > 0"> - </span>
               {{i > 0 ? array[0][1] - elm[1] : ''}}
             </mat-grid-tile>
-            <mat-grid-tile [ngClass]="{'first' : i == 0 }"> 
+            <mat-grid-tile [ngClass]="{'first' : i == 0, 'other' : i > 0 }"> 
               <mat-icon *ngIf="i > 0">call_made</mat-icon>
               {{i > 0 ? array[i-1][1] - elm[1] : ''}}
             </mat-grid-tile>

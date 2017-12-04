@@ -19,14 +19,34 @@ mat-toolbar > button {
 
 .firstPlaceName {
     font-weight: bold;
-    font-size: x-large;
+    font-size: xx-large;
 }
 
 .firstPlacePoints {
     font-weight: bold;    
-    font-size: x-large;
+    font-size: xx-large;
 }
 
 .first {
-    background: #7cff2a;
+    background: #3f51b5;
+    color:white;
+}
+
+.otherPlace {
+    font-weight: bold;
+    font-size: x-large;
+}
+
+.otherPlaceName {
+    font-weight: bold;
+    font-size: x-large;
+}
+
+.otherPlacePoints {
+    font-weight: bold;    
+    font-size: x-large;
+}
+
+.other {
+    
 }
