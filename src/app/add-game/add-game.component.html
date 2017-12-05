@@ -1,0 +1,107 @@
+
+<mat-toolbar *ngIf="auth.user() !== null" class="second-toolbar">
+    <mat-toolbar-row>
+  <button mat-mini-fab color="warn"> 
+    <mat-icon *ngIf="!lockOpen" (click)="lockOpen=true">
+      lock
+    </mat-icon>
+    <mat-icon *ngIf="lockOpen" (click)="lockOpen=false">
+        lock_open
+      </mat-icon>
+  </button>
+
+  <div class="example-spacer"></div>
+
+  <div *ngIf="lockOpen">
+    <button mat-mini-fab [matMenuTriggerFor]="menu" (click)="menuhelper=0;">{{players[0]}}</button>
+    <button mat-mini-fab [matMenuTriggerFor]="menu" (click)="menuhelper=1;">{{players[1]}}</button>
+    <button mat-mini-fab [matMenuTriggerFor]="menu" (click)="menuhelper=2;">{{players[2]}}</button>
+    <button mat-mini-fab *ngIf="players.length > 2" [matMenuTriggerFor]="menu" (click)="menuhelper=3;">{{players[3]}}</button>
+    <button mat-mini-fab *ngIf="players.length > 3" [matMenuTriggerFor]="menu" (click)="menuhelper=4;">{{players[4]}}</button>
+  </div>
+
+  <div *ngIf="!lockOpen">
+    <button mat-mini-fab disabled>{{players[0]}}</button>
+    <button mat-mini-fab disabled>{{players[1]}}</button>
+    <button mat-mini-fab disabled>{{players[2]}}</button>
+    <button mat-mini-fab disabled *ngIf="players.length > 3">{{players[3]}}</button>
+    <button mat-mini-fab disabled *ngIf="players.length > 4">{{players[4]}}</button>
+  </div>
+
+  <mat-menu #menu="matMenu">
+      <mat-grid-list cols="5" gutterSize="3px">
+        <mat-grid-tile *ngFor="let el of meaningfulPlayers()" style="background: light-blue" (click)="selectPlayer(el);">
+          <div style="cursor: pointer;font-weight: bold;font-family:Arial, Helvetica, sans-serif;">{{el}}</div>
+        </mat-grid-tile>
+      </mat-grid-list>
+  </mat-menu>
+
+</mat-toolbar-row>
+
+<mat-toolbar-row>
+  <span>Mitspieler:</span>
+
+  <div class="example-spacer"></div>
+
+  <div *ngFor="let ply of players" style="margin-left: 5px;">
+  <button mat-mini-fab [ngClass]="{'dialogselected': activeThree.indexOf(ply) != -1}" (click)="toggle(ply)">
+    {{ply}}
+  </button>
+  </div>
+</mat-toolbar-row>
+</mat-toolbar>
+
+    <mat-card>
+      <mat-card-title>Spieler:</mat-card-title>
+      <mat-card-content>
+        <button style="margin-right:5px;" mat-fab *ngFor="let ply of activeThree" [ngClass]="{'dialogselected': declarer == ply}" (click)="togglePly(ply)">
+          {{ply}}
+        </button>
+      </mat-card-content>
+    </mat-card>
+    
+    <mat-card>
+      <mat-card-title>Punkte:</mat-card-title>
+      <mat-card-content>
+        <div style="width:100%; overflow-y: hidden; height: 80px;">
+          <div style="width:1000px;">
+            <button style="margin-right:5px;" mat-fab *ngFor="let pnt of points" [ngClass]="{'dialogselected': selectedPoints == pnt}" (click)="selectedPoints=pnt;">
+              {{pnt}}
+            </button>
+          </div>
+        </div>
+        <table><tr>
+          <td>
+              <mat-form-field style="margin-top: 10px;width:100%;">
+                  <input #inputDeclarer matInput placeholder=""
+                  (keyup)="declarer=inputDeclarer.value" [value]="declarer"
+                  style="font-size: xx-large;text-align: center;">
+              </mat-form-field>
+          </td>
+          <td>
+              <mat-form-field style="margin-top: 10px;width:100%;">
+                  <input #inputPunkte matInput placeholder="" 
+                  (keyup)="selectedPoints=inputPunkte.value" [value]="selectedPoints"
+                  style="font-size: xx-large;text-align: center;">
+              </mat-form-field>
+          </td>
+        </tr></table>
+        
+      </mat-card-content>
+    </mat-card>
+  
+  <mat-toolbar style="margin-top: 20px;"> 
+      <div class="example-spacer"></div>
+      <button mat-fab color="primary" (click)="openAdd()"><mat-icon>add</mat-icon></button>
+  </mat-toolbar>
+
+  <!--
+  <pre>
+      <p>Spieler in Runde (allPlayers): </p>
+      <p>Beteiligte Spieler (activeThree): </p>
+      <p>Alleinspieler (declarer):</p>
+      <p>Punkte (points):</p>
+      <p>Kontra (kontra):</p>
+      <p>Uhrzeit (time):</p>
+  </pre>
+  -->

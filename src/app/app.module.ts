@@ -20,7 +20,7 @@ import { EditComponent } from './edit/edit.component';
 import { PagenotfoundComponent } from './pagenotfound/pagenotfound.component';
 import { ReadComponent } from './read/read.component';
 import { MatTableModule } from '@angular/material/table';
-import { EditSpieltagComponent, EditSpieltagAdd } from './edit-spieltag/edit-spieltag.component';
+import { EditSpieltagComponent } from './edit-spieltag/edit-spieltag.component';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
@@ -28,6 +28,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SpieltagTableComponent } from './spieltag-table/spieltag-table.component';
 import { MatTabsModule } from '@angular/material/tabs';
+import { AddGameComponent } from './add-game/add-game.component';
+import { EditGameComponent } from './edit-game/edit-game.component';
 
 const appRoutes: Routes = [
   {
@@ -41,6 +43,14 @@ const appRoutes: Routes = [
   {
     path: 'edit/spieltag/:id',
     component: EditSpieltagComponent
+  },
+  {
+    path: 'add_game',
+    component: AddGameComponent
+  },
+  {
+    path: 'edit_game',
+    component: EditGameComponent
   },
   {
     path: '',
@@ -60,10 +70,11 @@ const appRoutes: Routes = [
     PagenotfoundComponent,
     ReadComponent,
     EditSpieltagComponent,
-    EditSpieltagAdd,
     AppSeasonAdd,
     AppSeasonRemove,
-    SpieltagTableComponent
+    SpieltagTableComponent,
+    AddGameComponent,
+    EditGameComponent
   ],
   imports: [
     RouterModule.forRoot(
@@ -91,7 +102,6 @@ const appRoutes: Routes = [
     MatTooltipModule,
     MatTabsModule],
   entryComponents: [
-    EditSpieltagAdd,
     AppSeasonAdd,
     AppSeasonRemove
   ],

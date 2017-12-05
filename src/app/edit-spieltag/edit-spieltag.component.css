@@ -8,10 +8,6 @@ mat-toolbar > button {
     height: 70px;
 }
 
-.dialogselected {
-    background: darkcyan !important;
-}
-
 .firstPlace {
     font-weight: bold;
     font-size: xx-large;

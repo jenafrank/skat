@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { AuthenticationService } from "../authentication.service";
+import { GameView } from "../interfaces.service";
 
 @Component({
   selector: 'app-spieltag-table',
@@ -31,14 +32,3 @@ export class SpieltagTableComponent implements OnInit {
 
 }
 
-export interface GameView {
-  nr:string,
-  spieler:string,
-  punkte:string,
-  ply1:string,
-  ply2:string,
-  ply3:string,
-  ply4:string,
-  ply5:string,
-  mod:number
-}

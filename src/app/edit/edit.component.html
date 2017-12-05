@@ -4,7 +4,7 @@
   </mat-card-title>
 
   <mat-card-content>
-      <mat-grid-list cols="4" gutterSize="3px">
+      <mat-grid-list cols="4" gutterSize="3px" rowHeight="100px">
           <mat-grid-tile *ngFor="let i of days" (click)="goSpieltag(i)">
             <span class="spieltag"> {{i}} </span>
             </mat-grid-tile>            

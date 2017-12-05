@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { isUndefined } from 'util';
 import { DataService } from "./data.service";
+import { GameData, GameDataRaw } from "./interfaces.service";
 
 @Injectable()
 export class LogicService {
@@ -350,26 +351,4 @@ export class LogicService {
     return newmap;
   }
 
-}
-
-export interface GameData {
-  activeThree: string[];
-  allPlayers: string[];
-  declarer: string;
-  kontra: string;
-  mod: number;
-  nrPlayers: number;
-  points: number;
-  time: string;
-}
-
-export interface GameDataRaw {
-  activeThree: string;
-  allPlayers: string;
-  declarer: string;
-  kontra: string;
-  mod: string;
-  nrPlayers: string;
-  points: number;
-  time: string;
 }

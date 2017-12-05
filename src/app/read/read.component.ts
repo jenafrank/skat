@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { LogicService, GameData } from "../logic.service";
+import { LogicService } from "../logic.service";
 import { Router } from "@angular/router";
 import { PlotService } from "../plot.service";
 import { DataService } from "../data.service";
 import { GlobalService } from "../global.service";
 import { AuthenticationService } from "../authentication.service";
+import { GameData } from "../interfaces.service";
 import { Subscription } from 'rxjs/Subscription';
 
 @Component({

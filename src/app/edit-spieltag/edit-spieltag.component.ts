@@ -1,13 +1,16 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { DataService } from "../data.service";
-import { LogicService, GameData, GameDataRaw } from "../logic.service";
+import { LogicService } from "../logic.service";
+import { GlobalService } from "../global.service";
+import { GameData, GameDataRaw, GameView } from "../interfaces.service";
 import { MatTableDataSource } from '@angular/material';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
 import { isUndefined } from 'util';
 import { Subscription } from 'rxjs/Subscription';
 import { AuthenticationService } from "../authentication.service";
-import { GameView } from "../spieltag-table/spieltag-table.component"
+import { UrlSegment } from '@angular/router/src/url_tree';
+import { NavigationExtras } from '@angular/router/src/router';
 
 @Component({
   selector: 'app-edit-spieltag',
@@ -24,17 +27,17 @@ export class EditSpieltagComponent implements OnInit {
   dataSource3: any;
   
   spieltagData: any;  
-  displayedColumns: string[];
-  players: string[];
-  roundPlayers: string[];
-  menuhelper: number;
+  displayedColumns: string[];  
   selected: string;
   ascendingSort: boolean;
   spieltagAcc: [string,number][];
 
   subscription: Subscription;
 
-  constructor(private route:ActivatedRoute,
+  constructor(
+    private global: GlobalService,
+    private route:ActivatedRoute,
+    private router: Router,
     private dataService: DataService,
     private logic: LogicService,
     public dialog: MatDialog,
@@ -42,10 +45,7 @@ export class EditSpieltagComponent implements OnInit {
 
   ngOnInit() {    
     this.ascendingSort = true;
-    this.selected = "ADD";
-    this.menuhelper = -1;
-    this.roundPlayers=['😶','😶','😶','😶','😶'];
-    this.players=['A','F','R','Ro','S','T','Od','P','😶'];
+    this.selected = "ADD";       
     this.spieltag = +this.route.snapshot.paramMap.get('id');    
     this.dataService.alternativeTitle = "Spieltag " + this.spieltag;
     this.subscription = this.dataService.data.subscribe( (seasonData) => {
@@ -63,10 +63,6 @@ export class EditSpieltagComponent implements OnInit {
   updateView() {
     this.buildHeader();
     this.buildGameArray();      
-  }
-
-  selectPlayer(el:string) {
-    this.roundPlayers[this.menuhelper]=el;
   }
 
   buildHeader(): void {
@@ -189,132 +185,39 @@ export class EditSpieltagComponent implements OnInit {
     return ret;
   }
 
-  openEdit(row:number): void {
+  addGame(): void {
 
-  }
-
-  filteredRoundPlayers(): string[] {
-    let filteredRoundPlayers:string[] = [];
-    for (let ply of this.roundPlayers) {
-      if (ply != '😶') {
-        filteredRoundPlayers.push(ply);
-      }
-    }
-    return filteredRoundPlayers;
-  }
-
-  incmod():number {
-    let filteredRoundPlayers: string[] = this.filteredRoundPlayers();
-    let nrPly:number = filteredRoundPlayers.length;
-    let maxGameNr:number = this.dataService.totalgame(this.spieltagData);
-    let gamedata: GameDataRaw = this.spieltagData[this.dataService.game(maxGameNr)];
-
-    if (gamedata == null) return 1;
-
-    let mod:number = +gamedata.mod;
-
-    if ( gamedata.allPlayers.split(" ").length != filteredRoundPlayers.length ) {
-      return 1;
-    }
-    
-    mod++;
-    if (mod > nrPly) mod =1;
-
-    return mod;    
-  }
-
-  calcActiveThree(): string[] {
-    
-    let filteredRoundPlayers: string[] = this.filteredRoundPlayers();
-
-    let nrPly:number = filteredRoundPlayers.length;
-
-    if (nrPly < 3) return null;
-
-    if (nrPly == 3) {
-      return filteredRoundPlayers;
-    } 
-
-    let maxGameNr:number = this.dataService.totalgame(this.spieltagData);
-    let gamedata: GameDataRaw = this.spieltagData[this.dataService.game(maxGameNr)];
-
-    if (gamedata == null) { 
-      console.log("Something wrong with game data...");      
-      console.log("First game of spieltag maybe...");      
-    }
-
-    let mod:number = this.incmod();
-
-    if (nrPly == 4) {
-      let p1:string = filteredRoundPlayers[0];
-      let p2:string = filteredRoundPlayers[1];
-      let p3:string = filteredRoundPlayers[2];
-      let p4:string = filteredRoundPlayers[3];
-      
-      if (mod == 1) return [p2,p3,p4];
-      if (mod == 2) return [p3,p4,p1];
-      if (mod == 3) return [p4,p1,p2];
-      if (mod == 4) return [p1,p2,p3];
-    }
-
-    if (nrPly == 5) {
-      let p1:string = filteredRoundPlayers[0];
-      let p2:string = filteredRoundPlayers[1];
-      let p3:string = filteredRoundPlayers[2];
-      let p4:string = filteredRoundPlayers[3];
-      let p5:string = filteredRoundPlayers[4];
-      
-      if (mod == 1) return [p2,p3,p5];
-      if (mod == 2) return [p3,p4,p1];
-      if (mod == 3) return [p4,p5,p2];
-      if (mod == 4) return [p5,p1,p3];
-      if (mod == 5) return [p1,p2,p4];
-    }
-
-    console.log("Ups, that shouldn't happen");
-    return null;
-    
-  }
-
-  openAdd(): void {
+    /*
 
     if (this.dataService.selectedSeason != this.dataService.currentSeason) {
-      return;
+      // show warning dialog
     }
 
     let activeThree:string[] = this.calcActiveThree();
     let mod:number = this.incmod();
-
+    
     if (activeThree ==  null) {
       console.log("ERR IN ACTIVE THREE");
       return;
     }
-    
-    let data:Object = {
-      activeThree: activeThree,
-      allPlayers: this.filteredRoundPlayers(),
-      declarer: "E",
-      points: 0,
-      spieltag: this.spieltag,
-      mod: mod
-    }
 
-    let dialogRef = this.dialog.open(EditSpieltagAdd, {
-      width: '450px',
-      data: data
-    });
+    */
 
-    dialogRef.afterClosed().subscribe((ok:boolean) => {
-      
-      if (!ok) return;
-      
-      console.log('The dialog was closed');  
-      console.log(data);    
-      
-      this.dataService.addGame(data);
-    });
+    let navigationExtras: NavigationExtras = {
+      queryParams: { 
+        spieltag: this.spieltag,
+        season: this.dataService.selectedSeason        
+      }
+    };
+
+    this.router.navigate(["/add_game"],navigationExtras);
   }
 
+  openEdit(row: number): void {
+
+  }
+
+  /*
   removeLastGame():void {
 
     if (this.dataService.selectedSeason != this.dataService.currentSeason) {
@@ -323,52 +226,6 @@ export class EditSpieltagComponent implements OnInit {
 
     this.dataService.removeGame(this.spieltag);
   }
+  */
 
 }
-
-@Component({
-  selector: 'edit-spieltag-add',
-  templateUrl: 'edit-spieltag-add.html',
-  styleUrls: ['./edit-spieltag.component.css'] 
-})
-export class EditSpieltagAdd {
-
-  points: number[];
-
-  constructor(
-    public dialogRef: MatDialogRef<EditSpieltagAdd>,
-    @Inject(MAT_DIALOG_DATA) public data: any) { 
-      this.points = [18,20,22,24,48,72,96,120];
-    }
-
-  onNoClick(): void {
-    this.dialogRef.close(false);
-  }
-
-  toggle(ply): void {
-    let isActive:boolean = this.data.activeThree.indexOf(ply) !== -1;
-    if (isActive) {
-      this.data.activeThree.splice(this.data.activeThree.indexOf(ply),1);
-    } else {
-      this.data.activeThree.push(ply);
-    }
-  }
-
-  togglePly(ply): void {
-    this.data.declarer = (this.data.declarer != ply) ? ply : "E";
-    if (this.data.declarer == 'E') this.data.points = 0;
-  }
-
-  ok():boolean {
-
-    if (this.data.activeThree.length != 3) return false;
-    if (this.data.activeThree.indexOf(this.data.declarer) == -1 && this.data.declarer != 'E') return false;
-    if (this.data.points == 0 && this.data.declarer != 'E') return false;
-
-    return true;
-  }
-
-}
-
-
-
