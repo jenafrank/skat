@@ -30,6 +30,7 @@ import { SpieltagTableComponent } from './spieltag-table/spieltag-table.componen
 import { MatTabsModule } from '@angular/material/tabs';
 import { AddGameComponent } from './add-game/add-game.component';
 import { EditGameComponent } from './edit-game/edit-game.component';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 const appRoutes: Routes = [
   {
@@ -100,7 +101,8 @@ const appRoutes: Routes = [
     MatInputModule,
     MatFormFieldModule,
     MatTooltipModule,
-    MatTabsModule],
+    MatTabsModule,
+    MatExpansionModule],
   entryComponents: [
     AppSeasonAdd,
     AppSeasonRemove

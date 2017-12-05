@@ -16,6 +16,7 @@ export interface GameData {
   nrPlayers: number;
   points: number;
   time: string;
+  spieltag?: number;
 }
 
 export interface GameDataRaw {

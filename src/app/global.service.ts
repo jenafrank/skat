@@ -10,9 +10,12 @@ export class GlobalService {
   filteredRoundPlayers:string[];
   availablePlayers:string[]=['A','F','R','Ro','S','T','Od','P','😶'];
 
+  spieltag: number;
+
   toolbarMenufct: () => void;
 
   constructor(private dataService:DataService) { 
+    this.spieltag = 1;
     this.toolbarMenufct = () => { console.log("defaultToolbarFct") };    
     this.filteredRoundPlayers = [];
     this.availablePlayers = ['A','F','R','Ro','S','T','Od','P','😶'];

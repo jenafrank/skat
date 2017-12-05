@@ -1,9 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from "../authentication.service";
 import { GlobalService } from '../global.service';
 import { DataService } from '../data.service';
 import { Subscription } from 'rxjs/Subscription';
+import { isUndefined } from 'util';
+import { GameDataRaw, GameData } from "../interfaces.service";
 
 @Component({
   selector: 'app-add-game',
@@ -28,9 +30,11 @@ export class AddGameComponent implements OnInit, OnDestroy {
 
   lockOpen: boolean;
   subscription: Subscription;
+  kontra: string;
   
   constructor(
     private route: ActivatedRoute, 
+    private router: Router,
     private auth:AuthenticationService, 
     private glob:GlobalService,
     private dataService:DataService) {
@@ -44,7 +48,10 @@ export class AddGameComponent implements OnInit, OnDestroy {
 
     this.season = this.route.snapshot.queryParams['season'];
     this.spieltag = this.route.snapshot.queryParams['spieltag'];
+    this.glob.spieltag = this.spieltag;
+    this.dataService.alternativeTitle = "Spieltag " + this.spieltag;
     
+    this.kontra = "";
     this.declarer = " ";
     this.players = this.glob.getFilteredRoundPlayers();
     this.availablePlayers = this.glob.availablePlayers;
@@ -62,23 +69,24 @@ export class AddGameComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  onNoClick(): void {    
-  }
-
   onOkClick(): void {
-    /*
-    let data:Object = {
-      activeThree: activeThree,
-      allPlayers: this.filteredRoundPlayers(),
-      declarer: "E",
-      points: 0,
+
+    let now = new Date();
+    
+    let gamedata:GameData = {
+      activeThree: this.activeThree,
+      allPlayers: this.players,
+      declarer: this.declarer,
+      points: this.selectedPoints,
       spieltag: this.spieltag,
-      mod: mod
+      mod: this.glob.incmod(this.spieltagData),
+      kontra: this.kontra,
+      nrPlayers: this.players.length,
+      time: now.toLocaleString()
     }
   
-      this.dataService.addGame(data);
-    });
-    */
+    this.dataService.addGame(gamedata);    
+    this.router.navigate(['/edit/spieltag', this.glob.spieltag]);  
   }
 
   toggle(ply): void {    
@@ -116,6 +124,28 @@ export class AddGameComponent implements OnInit, OnDestroy {
 
     for (let ply of this.availablePlayers) {
       if (this.players.indexOf(ply) == -1) {
+        ret.push(ply);
+      }
+    }
+
+    return ret;
+  }
+
+  validate() {
+    return this.activeThree.length == 3 && 
+    this.declarer != null && 
+    this.declarer.length > 0 && 
+    this.selectedPoints != null;
+  }
+
+  kontraPlys():string[] {
+    let ret:string[]=[];
+
+    // Barrier:
+    if (isUndefined(this.activeThree) || this.activeThree==null ) return [];
+
+    for(let ply of this.activeThree) {
+      if (ply != this.declarer) {
         ret.push(ply);
       }
     }

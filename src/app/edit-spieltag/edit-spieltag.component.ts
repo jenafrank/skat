@@ -47,6 +47,7 @@ export class EditSpieltagComponent implements OnInit {
     this.ascendingSort = true;
     this.selected = "ADD";       
     this.spieltag = +this.route.snapshot.paramMap.get('id');    
+    this.global.spieltag = this.spieltag;
     this.dataService.alternativeTitle = "Spieltag " + this.spieltag;
     this.subscription = this.dataService.data.subscribe( (seasonData) => {
       if (seasonData == null) return;
