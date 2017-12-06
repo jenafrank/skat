@@ -20,7 +20,7 @@ import { EditComponent } from './edit/edit.component';
 import { PagenotfoundComponent } from './pagenotfound/pagenotfound.component';
 import { ReadComponent } from './read/read.component';
 import { MatTableModule } from '@angular/material/table';
-import { EditSpieltagComponent } from './edit-spieltag/edit-spieltag.component';
+import { EditSpieltagComponent, AppGameRemove } from './edit-spieltag/edit-spieltag.component';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
@@ -75,7 +75,8 @@ const appRoutes: Routes = [
     AppSeasonRemove,
     SpieltagTableComponent,
     AddGameComponent,
-    EditGameComponent
+    EditGameComponent,
+    AppGameRemove
   ],
   imports: [
     RouterModule.forRoot(
@@ -105,7 +106,8 @@ const appRoutes: Routes = [
     MatExpansionModule],
   entryComponents: [
     AppSeasonAdd,
-    AppSeasonRemove
+    AppSeasonRemove,
+    AppGameRemove
   ],
   providers: [AngularFireAuth],
   bootstrap: [AppComponent]

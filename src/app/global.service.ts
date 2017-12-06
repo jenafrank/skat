@@ -1,30 +1,40 @@
 import { Injectable } from '@angular/core';
 import { DataService } from "./data.service";
 import { GameData, GameDataRaw } from "./interfaces.service";
+import { isUndefined } from 'util';
 
 @Injectable()
 export class GlobalService {
 
-  roundPlayers: string[]; // persist
+  roundPlayers: string[]; // persist for game adding
 
   filteredRoundPlayers:string[];
   availablePlayers:string[]=['A','F','R','Ro','S','T','Od','P','😶'];
 
   spieltag: number;
+  selectedIndexTabGroup: number // Edit-Spieltag-View
 
   toolbarMenufct: () => void;
 
   constructor(private dataService:DataService) { 
+    this.selectedIndexTabGroup = 1;
     this.spieltag = 1;
     this.toolbarMenufct = () => { console.log("defaultToolbarFct") };    
     this.filteredRoundPlayers = [];
     this.availablePlayers = ['A','F','R','Ro','S','T','Od','P','😶'];
-    this.roundPlayers = ['😶','😶','😶','😶','😶'];
+    this.roundPlayers = this.emptyRoundPlayers();
   }
 
-  getFilteredRoundPlayers(): string[] {
+  emptyRoundPlayers(): string[] {
+    return ['😶','😶','😶','😶','😶'];
+  }
+
+  getFilteredRoundPlayers(roundPlayers?:string[]): string[] {
+
+    if (isUndefined(roundPlayers)) roundPlayers = this.roundPlayers;
+
     let filteredRoundPlayers:string[] = [];
-    for (let ply of this.roundPlayers) {
+    for (let ply of roundPlayers) {
       if (ply != '😶') {
         filteredRoundPlayers.push(ply);
       }

@@ -35,7 +35,7 @@ export class EditSpieltagComponent implements OnInit {
   subscription: Subscription;
 
   constructor(
-    private global: GlobalService,
+    public global: GlobalService,
     private route:ActivatedRoute,
     private router: Router,
     private dataService: DataService,
@@ -188,22 +188,6 @@ export class EditSpieltagComponent implements OnInit {
 
   addGame(): void {
 
-    /*
-
-    if (this.dataService.selectedSeason != this.dataService.currentSeason) {
-      // show warning dialog
-    }
-
-    let activeThree:string[] = this.calcActiveThree();
-    let mod:number = this.incmod();
-    
-    if (activeThree ==  null) {
-      console.log("ERR IN ACTIVE THREE");
-      return;
-    }
-
-    */
-
     let navigationExtras: NavigationExtras = {
       queryParams: { 
         spieltag: this.spieltag,
@@ -214,19 +198,29 @@ export class EditSpieltagComponent implements OnInit {
     this.router.navigate(["/add_game"],navigationExtras);
   }
 
-  openEdit(row: number): void {
-
-  }
-
-  /*
   removeLastGame():void {
+    
+    let dialogRef = this.dialog.open(AppGameRemove, {
+      width: '250px'
+    });
 
-    if (this.dataService.selectedSeason != this.dataService.currentSeason) {
-      return;
-    }
+    dialogRef.afterClosed().subscribe(result => {
+      if ( result ) {
+        this.dataService.removeGame(this.spieltag);
+      }
+    });    
+    
+  }  
 
-    this.dataService.removeGame(this.spieltag);
-  }
-  */
+}
+
+@Component({
+  selector: 'app-game-remove',
+  templateUrl: 'app-game-remove.html',
+})
+export class AppGameRemove {
+
+  constructor(
+    public dialogRef: MatDialogRef<AppGameRemove>) { }
 
 }

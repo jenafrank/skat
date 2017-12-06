@@ -5,6 +5,7 @@ import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { AngularFireList } from 'angularfire2/database/interfaces';
 import { AuthenticationService } from "./authentication.service";
 import { isUndefined } from 'util';
+import { GameData, GameDataRaw } from './interfaces.service';
 
 @Injectable()
 export class DataService {
@@ -132,6 +133,25 @@ export class DataService {
     let seasonStr:string = this.season(this.selectedSeason);
     let spieltagStr:string = this.day(data.spieltag);
     let gameStr:string = this.game(this.totalgame(this.currentData[spieltagStr])+1);
+
+    let objStr: string = seasonStr+"/"+spieltagStr+"/"+gameStr;
+
+    console.log(objStr);
+    console.log(data);
+
+    const ref = this.db.object(objStr);
+    ref.set(data);
+  }
+
+  editGame(data:any, game:number) {
+    let now:Date = new Date();
+
+    data.activeThree = data.activeThree.join(" ");
+    data.allPlayers = data.allPlayers.join(" ");
+
+    let seasonStr:string = this.season(this.selectedSeason);
+    let spieltagStr:string = this.day(data.spieltag);
+    let gameStr:string = this.game(game);
 
     let objStr: string = seasonStr+"/"+spieltagStr+"/"+gameStr;
 
