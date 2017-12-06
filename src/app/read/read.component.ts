@@ -31,7 +31,7 @@ export class ReadComponent implements OnInit,OnDestroy {
     this.dataService.setSeason();   
     this.labels = this.logic.labels;
     this.labelkeys = Array.from(this.labels.keys());
-    this.currentPlotKey = "Echte Punkte";
+    this.currentPlotKey = "Punkte";
     this.currentPlotValue = this.labels.get(this.currentPlotKey);
   }  
 

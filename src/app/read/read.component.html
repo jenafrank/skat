@@ -6,6 +6,7 @@
   
   <mat-sidenav #sidenav mode="over" opened="false" [(opened)]="sideNavOpened">
     <button mat-menu-item (click)="goEdit()">Spieltage</button>
+    <hr>
     <button *ngFor="let el of labelkeys" mat-menu-item (click)="currentPlotKey=el;currentPlotValue=this.labels.get(el);plot.barplot(currentPlotKey);sidenav.toggle();">
       {{el}}
     </button>    

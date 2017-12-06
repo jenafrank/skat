@@ -90,24 +90,24 @@ export class LogicService {
   initLabels(): void {
     this.labels = new Map(
       [
-        ["Echte Punkte", "punkte"],
-        ["Teilgenommene Spiele", "teilgenommen"],
-        ["Gewonnene Spiele", "gewonnen"],
-        ["Spiele als Alleinspieler", "gespielt"],
-        ["Gewonnene Spiele als Gegenspieler", "gewonnenGegenspiel"],
-        ["Spiele als Gegenspieler", "gespieltGegenspiel"],
-        ["% Gewonnene Gegenspiele", "ratioGegen"],
-        ["% Gewonnene Alleinspiele", "ratioAllein"],
-        ["% Anteil Alleinspiele an Teilgenommenen", "ratioGespielt"],
-        ["Ronald-Faktor", "ronaldFaktor"],
-        ["Ronald-Faktor mit Deckelung", "ronaldGedeckelt"],
         ["Punkte", "ronaldPunkte"],
-        ["Verlorene Spiele als Gegenspieler", "verGegen"],
-        ["Verlorene Spiele als Alleinspieler", "ver"],
-        ["Echte Turnier-Punkte", "turnierPunkte"],
+        ["Punkte-Pro-Teilgenommen", "ratioPPT"],        
+        ["Ronald-Faktor", "ronaldFaktor"],
+        ["% Gewonnene Alleinspiele", "ratioAllein"],
+        ["% Anteil Alleinspiele an Teilgenommenen", "ratioGespielt"],        
         ["Turnier-Punkte", "turnierRonaldPunkte"],
         ["Punkte-Pro-Teilgenommen Turnier", "turnierPPT"],
-        ["Punkte-Pro-Teilgenommen", "ratioPPT"]
+        ["Echte Punkte", "punkte"],
+        ["Echte Turnier-Punkte", "turnierPunkte"],
+        ["Teilgenommene Spiele", "teilgenommen"],
+        ["Spiele", "gespielt"],
+        ["Gewonnene Spiele", "gewonnen"],
+        ["Verlorene Spiele", "ver"],        
+        ["% Gewonnene Gegenspiele", "ratioGegen"],        
+        ["Spiele als Gegenspieler", "gespieltGegenspiel"],
+        ["Gewonnene Spiele als Gegenspieler", "gewonnenGegenspiel"],
+        ["Verlorene Spiele als Gegenspieler", "verGegen"],
+        ["Ronald-Faktor mit Deckelung", "ronaldGedeckelt"]
       ]
     );
   }
