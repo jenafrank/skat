@@ -6,7 +6,9 @@ import { isUndefined } from 'util';
 @Injectable()
 export class GlobalService {
 
-  roundPlayers: string[]; // persist for game adding
+  roundPlayers1: string[]; // persist for game adding
+  roundPlayers2: string[]; // persist for game adding
+  roundPlayers3: string[]; // persist for game adding
 
   filteredRoundPlayers:string[];
   availablePlayers:string[]=['A','F','R','Ro','S','T','Od','P','😶'];
@@ -22,7 +24,21 @@ export class GlobalService {
     this.toolbarMenufct = () => { console.log("defaultToolbarFct") };    
     this.filteredRoundPlayers = [];
     this.availablePlayers = ['A','F','R','Ro','S','T','Od','P','😶'];
-    this.roundPlayers = this.emptyRoundPlayers();
+    this.roundPlayers1 = this.emptyRoundPlayers();
+    this.roundPlayers2 = this.emptyRoundPlayers();
+    this.roundPlayers3 = this.emptyRoundPlayers();
+  }
+
+  roundPlayers(): string[] {
+    if (this.selectedIndexTabGroup == 1) return this.roundPlayers1;
+    if (this.selectedIndexTabGroup == 2) return this.roundPlayers2;
+    if (this.selectedIndexTabGroup == 3) return this.roundPlayers3;
+  }
+  
+  setRoundPlayers(roundPlayers:string[]):void {
+    if (this.selectedIndexTabGroup == 1) this.roundPlayers1=roundPlayers;
+    if (this.selectedIndexTabGroup == 2) this.roundPlayers2=roundPlayers;
+    if (this.selectedIndexTabGroup == 3) this.roundPlayers3=roundPlayers;
   }
 
   emptyRoundPlayers(): string[] {
@@ -31,7 +47,7 @@ export class GlobalService {
 
   getFilteredRoundPlayers(roundPlayers?:string[]): string[] {
 
-    if (isUndefined(roundPlayers)) roundPlayers = this.roundPlayers;
+    if (isUndefined(roundPlayers)) roundPlayers = this.roundPlayers();
 
     let filteredRoundPlayers:string[] = [];
     for (let ply of roundPlayers) {

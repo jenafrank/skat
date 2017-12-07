@@ -175,6 +175,44 @@ export class DataService {
     
   }
 
+  removeGameWithNr(spieltag: number, nr: number) {
+
+    let spieltagData: any = this.currentData[this.day(spieltag)];
+    let totalnr: number = this.totalgame(spieltagData);
+
+    console.log("Here");
+
+    if (nr == totalnr) {
+      this.removeGame(spieltag);
+    }
+
+    console.log("... and beyond");
+
+    let seasonStr: string = this.season(this.selectedSeason);
+    let spieltagStr: string = this.day(spieltag);
+    let gameStr: string = this.game(nr);
+
+    let objStr: string = seasonStr + "/" + spieltagStr;
+
+    let nc: Object = { ...spieltagData };
+
+    let i:number = 1;
+    let j:number = 1;
+    
+    while (!isUndefined(spieltagData[this.game(i)])) {
+      delete nc[this.game(i)];
+      if (i != nr) {
+        nc[this.game(j)] = spieltagData[this.game(i)];
+        j++;
+      }      
+      i++;
+    }
+   
+    const ref = this.db.object(objStr);
+    ref.set(nc);  
+    
+  }
+
   day(i:number):string {
     return i > 10 ? "day_"+i : "day_0"+i;
   }

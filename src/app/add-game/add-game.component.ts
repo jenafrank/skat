@@ -35,7 +35,7 @@ export class AddGameComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute, 
     private router: Router,
-    private auth:AuthenticationService, 
+    public auth:AuthenticationService, 
     private glob:GlobalService,
     private dataService:DataService) {
     
@@ -82,7 +82,8 @@ export class AddGameComponent implements OnInit, OnDestroy {
       mod: this.glob.incmod(this.spieltagData),
       kontra: this.kontra,
       nrPlayers: this.players.length,
-      time: now.toLocaleString()
+      time: now.toLocaleString(),
+      runde: this.glob.selectedIndexTabGroup
     }
   
     this.dataService.addGame(gamedata);    
@@ -114,7 +115,11 @@ export class AddGameComponent implements OnInit, OnDestroy {
   }
 
   selectPlayer(el:string) {
-    this.glob.roundPlayers[this.menuhelper]=el;
+    
+    let roundPlayers: string[] = this.glob.roundPlayers();
+    roundPlayers[this.menuhelper]=el;
+    this.glob.setRoundPlayers(roundPlayers);
+    
     this.players = this.glob.getFilteredRoundPlayers();
     this.activeThree = Array.from(this.glob.calcActiveThree(this.spieltagData));
   }

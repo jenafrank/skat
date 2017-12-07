@@ -26,6 +26,14 @@
         </mat-cell>
       </ng-container>
 
+      <!-- NrInRound Column -->
+      <ng-container matColumnDef="nrInRound">
+        <mat-header-cell *matHeaderCellDef> # </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <span style="font-size:smaller;">{{element.nrInRound}}</span>
+        </mat-cell>
+      </ng-container>
+
       <!-- Ply 1 -->
       <ng-container matColumnDef="ply1">
         <mat-header-cell *matHeaderCellDef> </mat-header-cell>

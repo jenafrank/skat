@@ -17,6 +17,7 @@ export interface GameData {
   points: number;
   time: string;
   spieltag?: number;
+  runde: number;  
 }
 
 export interface GameDataRaw {
@@ -28,10 +29,12 @@ export interface GameDataRaw {
   nrPlayers: string;
   points: number;
   time: string;
+  runde: number;
 }
 
 export interface GameView {
   nr:string,
+  nrInRound: string,
   spieler:string,
   punkte:string,
   ply1:string,

@@ -19,9 +19,6 @@ import { NavigationExtras } from '@angular/router/src/router';
 })
 export class EditSpieltagComponent implements OnInit {
 
-  spieltag: number;
-  games: GameView[];
-  
   dataSource: any;
   dataSource2: any;
   dataSource3: any;
@@ -45,13 +42,12 @@ export class EditSpieltagComponent implements OnInit {
 
   ngOnInit() {    
     this.ascendingSort = true;
-    this.selected = "ADD";       
-    this.spieltag = +this.route.snapshot.paramMap.get('id');    
-    this.global.spieltag = this.spieltag;
-    this.dataService.alternativeTitle = "Spieltag " + this.spieltag;
+    this.selected = "ADD";           
+    this.global.spieltag = +this.route.snapshot.paramMap.get('id');
+    this.dataService.alternativeTitle = "Spieltag " + this.global.spieltag;
     this.subscription = this.dataService.data.subscribe( (seasonData) => {
       if (seasonData == null) return;
-      this.spieltagData = seasonData[this.dataService.day(this.spieltag)];
+      this.spieltagData = seasonData[this.dataService.day(this.global.spieltag)];
       this.updateView();    
     })    
   }
@@ -63,12 +59,15 @@ export class EditSpieltagComponent implements OnInit {
 
   updateView() {
     this.buildHeader();
-    this.buildGameArray();      
+    this.buildGameArray(0);
+    this.buildGameArray(1);
+    this.buildGameArray(2);
+    this.buildGameArray(3);
   }
 
   buildHeader(): void {
     let maxround:number = this.logic.maxRoundFromDayData(this.spieltagData);
-    this.displayedColumns = ["nr","ply1","ply2","ply3","ply4","ply5","points","declarer"];
+    this.displayedColumns = ["nrInRound","ply1","ply2","ply3","ply4","ply5","points","declarer"];
     
     if (maxround < 5 ) {
       this.displayedColumns.splice(this.displayedColumns.indexOf("ply5"),1);
@@ -78,26 +77,39 @@ export class EditSpieltagComponent implements OnInit {
     }
   }
 
-  buildGameArray():void {
+  buildGameArray(runde:number):void {
     let total:number = this.dataService.totalgame(this.spieltagData);
 
-    this.games = [];   
+    let games: GameView[] = [];    
 
     let game: GameDataRaw;
     let view: GameView;
     let pnts: Map<string, number> = new Map();
     let currentPlayers: string = "";
-    let i:number = 0;
+    let i:number = 0; // total game nr
+    let j:number = 0; // round game nr
     let splittedPlayers: string[];
     let noheaderCnt: number = 0;
 
     while (i < total) {
             
       game = this.spieltagData[this.dataService.game(i+1)];
+
+      if ( ! ( 
+        runde == game.runde || 
+        runde == 1 && isUndefined(game.runde) ||
+        runde == 0
+      ) ) {
+        if (game.declarer != 'E') {
+          pnts.set(game.declarer, (pnts.get(game.declarer) || 0) + +game.points);
+        }
+        i++;
+        continue;
+      }
+
       view = this.getEmptyView();      
 
-      let allPlayersSignature:string = game.allPlayers;
-      
+      let allPlayersSignature:string = game.allPlayers;      
       if (currentPlayers != allPlayersSignature || (noheaderCnt > 7 && +game.mod==1)) {
         
         // Header mode
@@ -125,8 +137,9 @@ export class EditSpieltagComponent implements OnInit {
         // normal mode
         view.punkte = game.points.toString();
         view.nr = (i + 1).toString();
+        view.nrInRound = (j + 1).toString();
         view.spieler = game.declarer;
-        view.mod = +game.mod;
+        view.mod = (j % splittedPlayers.length) + 1;
 
         if (game.declarer != 'E') {
           pnts.set(game.declarer, pnts.get(game.declarer) + +game.points);
@@ -151,18 +164,21 @@ export class EditSpieltagComponent implements OnInit {
         if (splittedPlayers.length < 5) view.ply5 = " ";
         if (splittedPlayers.length < 4) view.ply4 = " ";
 
-        i++;
-      }
+        i++; 
+        j++;
+      }      
 
-      this.games.push(view);
+      games.push(view);
     }
     
     if (!this.ascendingSort) {
-      this.games = this.games.reverse();
+      games = games.reverse();
     }
 
-    this.dataSource = new MatTableDataSource(this.games);        
     this.spieltagAcc = Array.from(this.logic.sortMap(pnts));
+    if (runde == 1) this.dataSource = new MatTableDataSource(games);
+    if (runde == 2) this.dataSource2 = new MatTableDataSource(games);        
+    if (runde == 3) this.dataSource3 = new MatTableDataSource(games);        
   }
 
   toggleSort():void {
@@ -190,8 +206,9 @@ export class EditSpieltagComponent implements OnInit {
 
     let navigationExtras: NavigationExtras = {
       queryParams: { 
-        spieltag: this.spieltag,
-        season: this.dataService.selectedSeason        
+        spieltag: this.global.spieltag,
+        season: this.dataService.selectedSeason,
+        runde: this.global.selectedIndexTabGroup        
       }
     };
 
@@ -205,12 +222,28 @@ export class EditSpieltagComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if ( result ) {
-        this.dataService.removeGame(this.spieltag);
+      if ( result ) { 
+        let data:any[] = this.getCurrentDataSource().filteredData;
+
+        console.log(data);
+
+        if ( isUndefined(data) || data.length == 0 ) return;
+
+        let nr:number = data[data.length-1].nr;
+
+        console.log(nr);
+
+        this.dataService.removeGameWithNr(this.global.spieltag,nr);
       }
     });    
     
   }  
+
+  getCurrentDataSource():any {
+    if (this.global.selectedIndexTabGroup == 1) return this.dataSource;
+    if (this.global.selectedIndexTabGroup == 2) return this.dataSource2;
+    if (this.global.selectedIndexTabGroup == 3) return this.dataSource3;
+  }
 
 }
 

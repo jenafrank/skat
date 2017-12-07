@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, AfterViewInit } from '@angular/core';
 import { Router } from "@angular/router";
 import { Observable } from 'rxjs/Observable';
 
@@ -44,15 +44,15 @@ export class AppComponent implements OnInit{
 
   goUpState() {
     console.log(this.router.url);
-    if (this.router.url.startsWith("/edit/spieltag"))  {
-      this.router.navigate(['/edit']); 
-    } else if (this.router.url.startsWith("/edit")) {
-      this.router.navigate(['/read']); 
-    } else if (this.router.url.startsWith("/add_game")) {
-      this.router.navigate(['/edit/spieltag', this.global.spieltag]);   
+    if (this.router.url.startsWith("/edit/spieltag")) {
+      this.router.navigate(['/edit']);
     } else if (this.router.url.startsWith("/edit_game")) {
-      this.router.navigate(['/edit/spieltag', this.global.spieltag]);   
-    }      
+      this.router.navigate(['/edit/spieltag', this.global.spieltag]);
+    } else if (this.router.url.startsWith("/edit")) {
+      this.router.navigate(['/read']);
+    } else if (this.router.url.startsWith("/add_game")) {
+      this.router.navigate(['/edit/spieltag', this.global.spieltag]);
+    }
   }
 
   shouldShowBackButton() {

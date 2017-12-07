@@ -28,6 +28,7 @@ export class EditGameComponent implements OnInit, OnDestroy {
   players: string[];
   activeThree: string[];
   declarer: string;
+  runde: number;
 
   subscription: Subscription;
   kontra: string;
@@ -35,7 +36,7 @@ export class EditGameComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute, 
     private router: Router,
-    private auth: AuthenticationService, 
+    public auth: AuthenticationService, 
     private glob: GlobalService,
     private dataService: DataService) {
     
@@ -68,6 +69,8 @@ export class EditGameComponent implements OnInit, OnDestroy {
       console.log(this.gameData);
       
       this.kontra = this.gameData.kontra;
+
+      this.runde = this.gameData.runde || 1;
       
       this.players = this.gameData.allPlayers.split(" ");
 
@@ -100,7 +103,8 @@ export class EditGameComponent implements OnInit, OnDestroy {
       mod: +this.gameData.mod,
       kontra: this.kontra,
       nrPlayers: this.players.length,
-      time: this.gameData.time
+      time: this.gameData.time,
+      runde: this.runde
     }
   
     this.dataService.editGame(gamedata,this.game);    
