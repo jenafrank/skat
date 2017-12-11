@@ -44,3 +44,5 @@ export interface GameView {
   ply5:string,
   mod:number
 }
+
+export type LabelsSpecial = "Punkte (Verlauf)" | "Performanz";

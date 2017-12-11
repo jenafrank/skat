@@ -24,7 +24,7 @@ export class EditComponent implements OnInit {
   ) { }
 
   ngOnInit() {    
-    this.dataService.selectedSeason = this.dataService.currentSeason;
+    this.dataService.selectedSeason = this.dataService.selectedSeason;
     this.dataService.setSeason();
     this.subscription = this.dataService.data.subscribe( (seasonData:any) => {
       if (seasonData == null) return;            

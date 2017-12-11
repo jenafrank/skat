@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
+import { Subscription } from "rxjs/Subscription";
 import { AngularFireDatabase } from "angularfire2/database";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { AngularFireList } from 'angularfire2/database/interfaces';
@@ -19,6 +20,7 @@ export class DataService {
   dataObservable:Observable<any>;
   data:BehaviorSubject<any>;
   currentData:any;
+  subscription: Subscription;
 
   constructor(private db: AngularFireDatabase, private auth:AuthenticationService) {
     this.data = new BehaviorSubject(null);
@@ -29,8 +31,9 @@ export class DataService {
   }
 
   setSeason() {
+    if ( ! isUndefined(this.subscription) ) this.subscription.unsubscribe();
     this.dataObservable = this.db.object(this.season(this.selectedSeason)).valueChanges(); 
-    this.dataObservable.subscribe( (data) => { 
+    this.subscription = this.dataObservable.subscribe( (data) => { 
       if ( data == null ) {
         console.log("Season not available...");
         return;

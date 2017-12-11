@@ -19,6 +19,7 @@ export class ReadComponent implements OnInit,OnDestroy {
   currentPlotKey:string;
   currentPlotValue:string;
   labels:Map<string, string>;
+  labelsSpecial: string[];
   labelkeys:string[];
   sideNavOpened: boolean;
 
@@ -30,6 +31,7 @@ export class ReadComponent implements OnInit,OnDestroy {
     this.global.toolbarMenufct = () => { this.sideNavOpened = !this.sideNavOpened };
     this.dataService.setSeason();   
     this.labels = this.logic.labels;
+    this.labelsSpecial = this.logic.labelsSpecial;
     this.labelkeys = Array.from(this.labels.keys());
     this.currentPlotKey = "Punkte";
     this.currentPlotValue = this.labels.get(this.currentPlotKey);
@@ -42,7 +44,7 @@ export class ReadComponent implements OnInit,OnDestroy {
       this.logic.accumulateSeason(response);      
       this.logic.calculateDerivedQuantities();
       this.plot.ctx = document.getElementById("myChart");
-      this.plot.barplot(this.currentPlotKey);
+      this.plot.plot(this.currentPlotKey);
     });  
   }
 

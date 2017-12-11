@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { isUndefined } from 'util';
 import { DataService } from "./data.service";
-import { GameData, GameDataRaw } from "./interfaces.service";
+import { GameData, GameDataRaw, LabelsSpecial } from "./interfaces.service";
 
 @Injectable()
 export class LogicService {
@@ -33,6 +33,7 @@ export class LogicService {
 
   // Labels
   labels: Map<string, string>;
+  labelsSpecial: LabelsSpecial[];
 
   // Colors
   colors: Map<string, string>;
@@ -50,23 +51,24 @@ export class LogicService {
     this.initLabels();
     this.initColors();
     this.initBorders();
+    this.initLabelsSpecial();
     this.reset();
   }
 
   initColors(): void {
     this.colors = new Map([
-      ["A", "rgba(255,0,0,0.5)"],
-      ["F", "rgba(0,255,0,0.5)"],
-      ["R", "rgba(0,0,255,0.5)"],
-      ["Ro", "rgba(255,0,255,0.5)"],
-      ["Od", "rgba(255,128,128,0.5)"],
-      ["T", "rgba(0,255,255,0.5)"],
-      ["S", "rgba(128,0,0,0.5)"],
-      ["M", "rgba(0,128,0,0.5)"],
-      ["C", "rgba(0,0,128,0.5)"],
-      ["J", "rgba(128,128,0,0.5)"],
-      ["Ra", "rgba(128,0,128,0.5)"],
-      ["P", "rgba(0,128,128,0.5)"]
+      ["A", "rgba(255,0,0,0.2)"],
+      ["F", "rgba(0,255,0,0.2)"],
+      ["R", "rgba(0,0,255,0.2)"],
+      ["Ro", "rgba(255,0,255,0.2)"],
+      ["Od", "rgba(255,128,128,0.2)"],
+      ["T", "rgba(0,255,255,0.2)"],
+      ["S", "rgba(128,0,0,0.2)"],
+      ["M", "rgba(0,128,0,0.2)"],
+      ["C", "rgba(0,0,128,0.2)"],
+      ["J", "rgba(128,128,0,0.2)"],
+      ["Ra", "rgba(128,0,128,0.2)"],
+      ["P", "rgba(0,128,128,0.2)"]
     ]);
   }
 
@@ -110,6 +112,13 @@ export class LogicService {
         ["Ronald-Faktor mit Deckelung", "ronaldGedeckelt"]
       ]
     );
+  }
+
+  initLabelsSpecial(): void {
+    this.labelsSpecial = [
+      "Punkte (Verlauf)",
+      "Performanz"
+    ];
   }
 
   reset(): void {
@@ -169,24 +178,32 @@ export class LogicService {
     this.inc(this.gespielt, data.declarer);
 
     // Eingemischt-Barriere:
-    if (data.declarer == 'E') return;
+    if (data.declarer != 'E') {
 
-    // Reguläres Spiel:
-    this.add(this.punkte, data.declarer, data.points);
-    this.incWithCondition(this.gewonnen, data.declarer, data.points > 0);
+      // Reguläres Spiel:
+      this.add(this.punkte, data.declarer, data.points);
+      this.incWithCondition(this.gewonnen, data.declarer, data.points > 0);
 
-    // Nur für Gegenspiel-Statistik:
-    for (let ply of data.activeThree) {
-      if (ply != data.declarer) {
-        this.inc(this.gespieltGegenspiel, ply);
-        this.incWithCondition(this.gewonnenGegenspiel, ply, data.points < 0);
+      // Nur für Gegenspiel-Statistik:
+      for (let ply of data.activeThree) {
+        if (ply != data.declarer) {
+          this.inc(this.gespieltGegenspiel, ply);
+          this.incWithCondition(this.gewonnenGegenspiel, ply, data.points < 0);
+        }
       }
+
     }
 
     // Add data to series quantities
-    this.punkteSeries
-      .get(data.declarer)
-      .set(this.currentTotalGame, this.punkte.get(data.declarer));
+    this.calculateDerivedQuantities();
+    
+    // If skat data is wrongly formatted, permit continuation anyways...
+    for (let ply of this.registeredPlayers) {      
+      if (ply != 'E') {
+        let qty:number = this.ronaldPunkte.get(ply);
+        this.punkteSeries.get(ply).set(this.currentTotalGame,qty);
+      }
+    }  
 
     if (this.currentDay > 0) {
       this.spieltagSeries.set(this.currentDay, this.currentTotalGame);

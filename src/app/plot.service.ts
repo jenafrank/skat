@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { LogicService } from "./logic.service";
 import { isUndefined } from 'util';
 import Chart from "chart.js";
+import"chartjs-plugin-annotation";
+import { LabelsSpecial } from './interfaces.service';
 
 @Injectable()
 export class PlotService {
@@ -50,6 +52,168 @@ export class PlotService {
   // sort the logic data to show the best leftmost, the worst righmost (bar plot)
   getSortedMapForBarPlot(mapkey:string):Map<string, number> {
     return this.logic.sortMap(this.logic[this.logic.labels.get(mapkey)]);    
+  }
+
+  plot(key:string): void {
+    let keyspecial: LabelsSpecial = key as LabelsSpecial;
+    if (this.logic.labels.has(key)) {
+      this.barplot(key);
+    } else if ( keyspecial == "Punkte (Verlauf)") {
+      this.timeSeriesPlot(this.logic.punkteSeries);
+    } else if ( keyspecial == "Performanz") {
+      this.performancePlot();
+    }
+  }
+
+  // time series plot
+
+  timeSeriesPlot(seriesdata: Map<string, Map<number, number>>) {
+
+    let allPlayers: string[] = Array.from(seriesdata.keys());
+    let data: Object ={}
+
+    for (let ply of allPlayers) {
+      let dataset = Array.from(seriesdata.get(ply));
+      let pointObjArray: Object[] = [];
+      for (let point of dataset) {
+        let pointObj: Object = {
+          x: point[0],
+          y: point[1]
+        };
+        pointObjArray.push(pointObj);
+      }
+      data[ply] = pointObjArray;
+    }
+
+    let datasets: Object[] = [];
+    for (let ply of allPlayers) {
+      datasets.push({
+        label: ply,
+        data: data[ply],
+        showLine: true,
+        lineTension: 0,        
+        borderColor: this.logic.borders.get(ply),
+        backgroundColor: this.logic.colors.get(ply),
+        pointRadius: 0,
+        fill:false        
+      }); 
+    }
+
+    if ( ! isUndefined(this.myChart)) this.myChart.destroy();
+
+    var spieltage = this.logic.spieltagSeries;
+
+    this.myChart = new Chart(this.ctx, {
+      type: 'scatter',
+      data: {
+        datasets: datasets        
+      },
+      options: {
+        scales: {
+          xAxes: [{
+            afterBuildTicks: function(scale) {
+              scale.ticks = Array.from(spieltage.values());
+              console.log("---");
+              return;
+            }
+          }]
+        }
+      }
+    });
+
+  }
+
+  // performance plot
+  performancePlot() {
+
+    let allPlayers: string[] = this.logic.registeredPlayers;
+    let data: Object = {}
+    let datasets: Object[] = [];
+
+    var maxx, maxy, minx, miny: number;
+    maxx=0;
+    maxy=0;
+    minx=100;
+    miny=100;
+
+    for (let ply of allPlayers) {
+      if (ply != 'E') {
+        let el: any = {
+          x: this.logic.ratioAllein.get(ply),
+          y: this.logic.ratioGespielt.get(ply)
+        };        
+
+        if (maxx < el.x) maxx=el.x;
+        if (maxy < el.y) maxy=el.y;
+        if (minx > el.x) minx=el.x;
+        if (miny > el.y) miny=el.y;
+
+        datasets.push({
+          label: ply,
+          data: [el],
+          pointRadius: 20.,
+          fill: false,
+          showLine: false,
+          pointBorderColor: this.logic.borders.get(ply),
+          pointBackgroundColor: this.logic.colors.get(ply),
+          borderColor: this.logic.borders.get(ply),
+          backgroundColor: this.logic.colors.get(ply),
+        });
+      }
+    }
+
+    if (!isUndefined(this.myChart)) this.myChart.destroy();
+
+    this.myChart = new Chart(this.ctx, {
+      type: 'scatter',
+      data: {
+        datasets: datasets
+      },
+      options: {
+        annotation: {
+          annotations: [{
+            borderColor: 'red',
+            borderWidth: 2,
+            mode: 'vertical',
+            type: 'line',
+            value: 5/6*100,
+            scaleID: 'x-axis-0'
+          }, {
+            borderColor: 'red',            
+            borderWidth: 2,
+            mode: 'horizontal',
+            type: 'line',
+            value: 1/3*100,
+            scaleID: 'y-axis-0'
+          }]
+        },
+        scales: {
+          xAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: '% Gewonnen'
+            },
+            id: 'x-axis-0',
+            ticks: {
+              max: 100,
+              min: Math.max(Math.min(minx-5,66),0)
+            }
+          }],
+          yAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: '% Gespielt'
+            },
+            id: 'y-axis-0',
+            ticks: {
+              max: Math.max(50,maxy),
+              min: Math.max(miny-5,0)
+            }
+          }]
+        }
+      }
+    });
+    
   }
 
   // bar plot

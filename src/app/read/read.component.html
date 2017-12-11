@@ -5,10 +5,14 @@
   </div>
   
   <mat-sidenav #sidenav mode="over" opened="false" [(opened)]="sideNavOpened">
-    <button mat-menu-item (click)="goEdit()">Spieltage</button>
+    <button mat-menu-item (click)="goEdit()"><mat-icon>arrow_forward</mat-icon>Spieltage</button>
     <hr>
-    <button *ngFor="let el of labelkeys" mat-menu-item (click)="currentPlotKey=el;currentPlotValue=this.labels.get(el);plot.barplot(currentPlotKey);sidenav.toggle();">
-      {{el}}
+    <button *ngFor="let el of labelsSpecial" mat-menu-item (click)="currentPlotKey=el;currentPlotValue=this.labels.get(el);plot.plot(currentPlotKey);sidenav.toggle();">
+      <mat-icon>timeline</mat-icon>{{el}}
+    </button>    
+    <hr>
+    <button *ngFor="let el of labelkeys" mat-menu-item (click)="currentPlotKey=el;currentPlotValue=this.labels.get(el);plot.plot(currentPlotKey);sidenav.toggle();">
+      <mat-icon>equalizer</mat-icon>{{el}}
     </button>    
   </mat-sidenav>
 

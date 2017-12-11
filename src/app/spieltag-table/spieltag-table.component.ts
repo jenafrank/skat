@@ -33,6 +33,7 @@ export class SpieltagTableComponent implements OnInit {
 
   selectRow(row) {
     if (this.auth.user() === null) return;    
+    if ( Number(row.nr) < 1 ) return;
     this.openEdit(row.nr);        
   }
 
