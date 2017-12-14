@@ -220,6 +220,10 @@ export class DataService {
     return i > 10 ? "day_"+i : "day_0"+i;
   }
 
+  dayOld(i:number):string {
+    return "day_"+i;
+  }
+
   game(i:number):string {
     return "game_"+i;
   }

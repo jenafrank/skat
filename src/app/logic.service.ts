@@ -14,6 +14,7 @@ export class LogicService {
   teilgenommen: Map<string, number>;
   gewonnen: Map<string, number>;
   gespielt: Map<string, number>;
+  
   gewonnenGegenspiel: Map<string, number>;
   gespieltGegenspiel: Map<string, number>;
 
@@ -150,6 +151,13 @@ export class LogicService {
   }
 
   accumulateSeason(data: any) {
+
+    // Old Season Barrier
+    if (this.ds.selectedSeason < 10) {
+      this.accumulateSeasonOld(data);
+      return;
+    }
+
     let i: number = 1;
     while (!isUndefined(data[this.ds.day(i)])) {
       this.currentDay = i;
@@ -158,13 +166,58 @@ export class LogicService {
     }
   }
 
+  accumulateSeasonOld(data: any) {
+
+    let i: number = 1;
+    while (!isUndefined(data[this.ds.dayOld(i)])) {
+      this.currentDay = i;
+      this.accumulateDayOld(data[this.ds.dayOld(i)]);
+      i++;
+    }
+
+    this.calculateDerivedQuantitiesOld();
+
+  }
+
+  accumulateDayOld(data:any) {
+
+    this.addNewPlayers(Object.getOwnPropertyNames(data.val));
+    this.addNewPlayers(Object.getOwnPropertyNames(data.teil));
+    this.addNewPlayers(Object.getOwnPropertyNames(data.ges));
+    this.addNewPlayers(Object.getOwnPropertyNames(data.gew));
+
+    for (let ply of Object.keys(data.val)) {
+      this.add(this.punkte, ply, this.convertStringToNumberOld(data.val[ply]));
+    }
+
+    for (let ply of Object.keys(data.teil)) {      
+      this.add(this.teilgenommen, ply, this.convertStringToNumberOld(data.teil[ply]));
+    }
+
+    for (let ply of Object.keys(data.ges)) {
+      this.add(this.gespielt, ply, this.convertStringToNumberOld(data.ges[ply]));
+    }
+
+    for (let ply of Object.keys(data.gew)) {
+      this.add(this.gewonnen, ply, this.convertStringToNumberOld(data.gew[ply]));
+    }
+
+  }
+
+  convertStringToNumberOld(str: string): number {
+    return +(str.replace(",","."));
+  }
+
+
   accumulateDay(data: any) {
+
     let i: number = 1;
     while (!isUndefined(data[this.ds.game(i)])) {
       let gamedata: GameData = this.transformResponseToGameData(data[this.ds.game(i)]);
       this.accumulate(gamedata);
-      i++;
+      i++;    
     }
+
   }
 
   accumulate(data: GameData): void {
@@ -211,6 +264,53 @@ export class LogicService {
 
     // Fehlerüberprüfung aus "all Five", "mod" und "activeThree" möglich
     // ...
+  }
+
+  calculateDerivedQuantitiesOld() {
+
+     // Calculate reference number of games for ronald faktor
+     let maxgames = 0.;
+     for (let i in this.registeredPlayers) {
+       let ply: string = this.registeredPlayers[i];
+       if (ply == 'E') continue;
+ 
+       let Nply = this.teilgenommen.get(ply);
+       if (Nply > maxgames) maxgames = Nply;
+     }
+ 
+     // define cap
+     let deckel = 3.;
+ 
+     // Derive quantities:
+     for (let i in this.registeredPlayers) {
+ 
+       let ply: string = this.registeredPlayers[i];
+ 
+       if (ply == 'E') continue;
+ 
+       this.ratioAllein
+         .set(ply, this.gewonnen.get(ply) / this.gespielt.get(ply) * 100.);
+ 
+       this.ratioGespielt
+         .set(ply, this.gespielt.get(ply) / this.teilgenommen.get(ply) * 100.);
+ 
+       this.ronaldFaktor
+         .set(ply, maxgames / this.teilgenommen.get(ply));
+ 
+       this.ronaldGedeckelt
+         .set(ply, this.ronaldFaktor.get(ply) > deckel ? deckel : this.ronaldFaktor.get(ply));
+ 
+       this.ronaldPunkte
+         .set(ply, this.ronaldGedeckelt.get(ply) * this.punkte.get(ply));
+ 
+       this.ver
+         .set(ply, this.gespielt.get(ply) - this.gewonnen.get(ply));
+ 
+       this.ratioPPT
+         .set(ply, this.punkte.get(ply) / this.teilgenommen.get(ply));
+ 
+     }
+
   }
 
   calculateDerivedQuantities() {
