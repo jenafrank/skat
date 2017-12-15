@@ -26,7 +26,7 @@ import { isUndefined } from 'util';
 export class AppComponent implements OnInit{
     
   seasons: number[];
-   
+     
   ngOnInit(): void {      
     this.generateSeasonArray();    
     console.log(this.auth);
@@ -72,7 +72,7 @@ export class AppComponent implements OnInit{
     this.seasons = [];
 
     let i:number;
-    for(i=this.dataService.currentSeason;i>=1;i--) {
+    for(i=this.dataService.currentSeason;i>=10;i--) {
       this.seasons.push(i);
     }
   }
@@ -109,6 +109,12 @@ export class AppComponent implements OnInit{
         this.dataService.removeSeason(result);
       }
     });    
+  }
+
+  selectedSeasonTitle() {
+    if (this.dataService.selectedSeason > 0) return this.dataService.selectedSeason;
+    if (this.dataService.selectedSeason == -1) return "I1";
+    if (this.dataService.selectedSeason == -2) return "I2";
   }
 }
 

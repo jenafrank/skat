@@ -12,3 +12,7 @@ mat-grid-tile {
     background: rgba(0,0,0,0.7);
     font-size: small;
 }
+
+.oldseason {
+    background: gold;
+}

@@ -15,6 +15,7 @@ export class DataService {
   currentSeason:number;
   selectedSeason:number;
   alternativeTitle:string;
+  seasonDateSpan: string;
 
   // Fetched data object from Google Firebase
   dataObservable:Observable<any>;
@@ -43,10 +44,17 @@ export class DataService {
 
       // Own service instance should hold a real value
       this.currentData = data;
+
+      // calculate season date span
+      this.calculateSeasonDateSpan();
     });    
   }
 
   season(i:number):string {
+
+    if (i == -1) return "season_4_5";
+    if (i == -2) return "season_5_5";
+
     return "season_"+i;
   }
 
@@ -224,13 +232,17 @@ export class DataService {
     return "day_"+i;
   }
 
+  daygeneric(i:number):string {
+    return this.selectedSeason < 10 ? this.dayOld(i) : this.day(i);
+  }
+
   game(i:number):string {
     return "game_"+i;
   }
 
   totalday(data: any):number {
     let i:number = 1;
-    while ( ! isUndefined(data[this.day(i)]) ) i++;
+    while ( ! isUndefined(data[this.daygeneric(i)]) ) i++;
     return i-1;
   }
 
@@ -239,5 +251,24 @@ export class DataService {
     while ( ! isUndefined(data[this.game(i)]) ) i++;
     return i-1;
   }
-  
+
+  calculateSeasonDateSpan(): string {
+    
+        if ( isUndefined(this.currentData)) return "";
+    
+        let N:number = this.totalday(this.currentData);
+    
+        let firstdaydata:any = this.currentData[this.daygeneric(1)];
+        let lastdaydata:any = this.currentData[this.daygeneric(N)];
+    
+        if ( isUndefined (firstdaydata) ) firstdaydata = {date: ''};
+        if ( isUndefined (lastdaydata) ) lastdaydata = {date: ''};
+    
+        let startDate:string = firstdaydata.date || '';
+        let endDate:string = lastdaydata.date || '';
+        
+        this.seasonDateSpan = `${startDate} - ${endDate}`;
+        if (this.seasonDateSpan.length == 3) this.seasonDateSpan = null;
+      }
+
 }

@@ -17,3 +17,9 @@
   </mat-sidenav>
 
 </mat-sidenav-container>
+
+<mat-toolbar *ngIf="dataService.seasonDateSpan!=null" color="primary">
+  <span class="example-spacer"></span>
+  <span> {{dataService.seasonDateSpan}}</span>
+  <span class="example-spacer"></span>  
+</mat-toolbar>

@@ -7,6 +7,7 @@ import { GlobalService } from "../global.service";
 import { AuthenticationService } from "../authentication.service";
 import { GameData } from "../interfaces.service";
 import { Subscription } from 'rxjs/Subscription';
+import { isUndefined } from 'util';
 
 @Component({
   selector: 'app-read',
@@ -21,9 +22,7 @@ export class ReadComponent implements OnInit,OnDestroy {
   labels:Map<string, string>;
   labelsSpecial: string[];
   labelkeys:string[];
-  sideNavOpened: boolean;
-
-  
+  sideNavOpened: boolean;  
   subscription: Subscription;
     
   ngOnInit(): void {
@@ -58,7 +57,7 @@ export class ReadComponent implements OnInit,OnDestroy {
     private logic: LogicService,    
     private router: Router,
     private plot: PlotService,
-    private dataService: DataService,
+    public dataService: DataService,
     private auth: AuthenticationService,
     private global: GlobalService) {}
 

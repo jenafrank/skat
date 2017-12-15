@@ -16,7 +16,7 @@
           style="font-size: larger;min-width: 55px;color: #adfda4;"
           >
 
-      <b>{{dataService.selectedSeason}}</b>
+      <b>{{selectedSeasonTitle()}}</b>
       
   </button>
 
@@ -34,6 +34,51 @@
       <mat-grid-tile *ngFor="let el of seasons" (click)="loadSeason(el)">
         <div>{{el}}</div>
       </mat-grid-tile>
+      
+      <mat-grid-tile (click)="loadSeason(9)" class="oldseason">
+        <div>9</div>
+      </mat-grid-tile>
+
+      <mat-grid-tile (click)="loadSeason(8)" class="oldseason">
+        <div>8</div>
+      </mat-grid-tile>
+
+      <mat-grid-tile (click)="loadSeason(7)" class="oldseason">
+        <div>7</div>
+      </mat-grid-tile>
+
+      <mat-grid-tile (click)="loadSeason(6)" class="oldseason">
+        <div>6</div>
+      </mat-grid-tile>
+
+      <mat-grid-tile (click)="loadSeason(-2)" class="oldseason">
+        <div>I2</div>
+      </mat-grid-tile>
+
+      <mat-grid-tile (click)="loadSeason(5)" class="oldseason">
+        <div>5</div>
+      </mat-grid-tile>
+
+      <mat-grid-tile (click)="loadSeason(-1)" class="oldseason">
+        <div>I1</div>
+      </mat-grid-tile>
+
+      <mat-grid-tile (click)="loadSeason(4)" class="oldseason">
+        <div>4</div>
+      </mat-grid-tile>
+
+      <mat-grid-tile (click)="loadSeason(3)" class="oldseason">
+        <div>3</div>
+      </mat-grid-tile>
+
+      <mat-grid-tile (click)="loadSeason(2)" class="oldseason">
+        <div>2</div>
+      </mat-grid-tile>
+
+      <mat-grid-tile (click)="loadSeason(1)" class="oldseason">
+        <div>1</div>
+      </mat-grid-tile>
+
       <mat-grid-tile *ngIf="auth.user() !== null" (click)="addSeason();" style="background:#99ff99">
          <mat-icon>add</mat-icon>
       </mat-grid-tile>
