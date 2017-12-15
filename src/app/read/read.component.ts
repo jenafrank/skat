@@ -64,5 +64,9 @@ export class ReadComponent implements OnInit,OnDestroy {
   goEdit():void {
     this.router.navigate(['/edit']);
   }
+
+  goGrossmeister():void {
+    this.router.navigate(['/galerie']);
+  }
   
 }

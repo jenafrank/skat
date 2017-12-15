@@ -52,6 +52,8 @@ export class AppComponent implements OnInit{
       this.router.navigate(['/read']);
     } else if (this.router.url.startsWith("/add_game")) {
       this.router.navigate(['/edit/spieltag', this.global.spieltag]);
+    } else if (this.router.url.startsWith("/galerie")) {
+      this.router.navigate(['/read']);
     }
   }
 

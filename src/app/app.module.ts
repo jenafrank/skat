@@ -31,8 +31,13 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { AddGameComponent } from './add-game/add-game.component';
 import { EditGameComponent } from './edit-game/edit-game.component';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { GalerieComponent } from './galerie/galerie.component';
 
 const appRoutes: Routes = [
+  {
+    path: 'galerie',
+    component: GalerieComponent
+  },
   {
     path: 'read',
     component: ReadComponent
@@ -76,7 +81,8 @@ const appRoutes: Routes = [
     SpieltagTableComponent,
     AddGameComponent,
     EditGameComponent,
-    AppGameRemove
+    AppGameRemove,
+    GalerieComponent
   ],
   imports: [
     RouterModule.forRoot(

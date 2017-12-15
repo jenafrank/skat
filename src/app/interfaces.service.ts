@@ -46,3 +46,8 @@ export interface GameView {
 }
 
 export type LabelsSpecial = "Punkte (Verlauf)" | "Performanz";
+
+export interface MeisterStruct {
+  name: string,
+  spielzeiten: string[]
+}

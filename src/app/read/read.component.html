@@ -14,6 +14,9 @@
     <button *ngFor="let el of labelkeys" mat-menu-item (click)="currentPlotKey=el;currentPlotValue=this.labels.get(el);plot.plot(currentPlotKey);sidenav.toggle();">
       <mat-icon>equalizer</mat-icon>{{el}}
     </button>    
+    <hr>
+    <button mat-menu-item (click)="goGrossmeister()"><mat-icon>filter_vintage</mat-icon>Alle Großmeister</button>
+
   </mat-sidenav>
 
 </mat-sidenav-container>
