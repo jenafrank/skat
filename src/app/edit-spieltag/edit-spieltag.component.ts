@@ -22,9 +22,12 @@ export class EditSpieltagComponent implements OnInit {
   dataSource: any;
   dataSource2: any;
   dataSource3: any;
+
+  displayedColumns: string[];
+  displayedColumns2: string[];
+  displayedColumns3: string[];
   
-  spieltagData: any;  
-  displayedColumns: string[];  
+  spieltagData: any;      
   selected: string;
   ascendingSort: boolean;
   spieltagAcc: [string,number][];
@@ -86,6 +89,8 @@ export class EditSpieltagComponent implements OnInit {
     let view: GameView;
     let pnts: Map<string, number> = new Map();
     let currentPlayers: string = "";
+    let currentMod: number = 0;
+
     let i:number = 0; // total game nr
     let j:number = 0; // round game nr
     let splittedPlayers: string[];
@@ -110,10 +115,11 @@ export class EditSpieltagComponent implements OnInit {
       view = this.getEmptyView();      
 
       let allPlayersSignature:string = game.allPlayers;      
-      if (currentPlayers != allPlayersSignature || (noheaderCnt > 7 && +game.mod==1)) {
+      if (currentPlayers != allPlayersSignature) {
         
         // Header mode
         
+        currentMod = 0;
         noheaderCnt = 0;
         currentPlayers = allPlayersSignature;
 
@@ -132,14 +138,14 @@ export class EditSpieltagComponent implements OnInit {
 
       } else {
 
-        noheaderCnt++;
+        noheaderCnt++;        
 
         // normal mode
         view.punkte = game.points.toString();
         view.nr = (i + 1).toString();
         view.nrInRound = (j + 1).toString();
         view.spieler = game.declarer;
-        view.mod = (j % splittedPlayers.length) + 1;
+        view.mod = (currentMod % splittedPlayers.length) + 1;
 
         if (game.declarer != 'E') {
           pnts.set(game.declarer, pnts.get(game.declarer) + +game.points);
@@ -166,6 +172,7 @@ export class EditSpieltagComponent implements OnInit {
 
         i++; 
         j++;
+        currentMod++;
       }      
 
       games.push(view);

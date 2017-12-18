@@ -32,6 +32,7 @@ import { AddGameComponent } from './add-game/add-game.component';
 import { EditGameComponent } from './edit-game/edit-game.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { GalerieComponent } from './galerie/galerie.component';
+import { MatRadioModule } from '@angular/material/radio';
 
 const appRoutes: Routes = [
   {
@@ -109,7 +110,8 @@ const appRoutes: Routes = [
     MatFormFieldModule,
     MatTooltipModule,
     MatTabsModule,
-    MatExpansionModule],
+    MatExpansionModule,
+    MatRadioModule],
   entryComponents: [
     AppSeasonAdd,
     AppSeasonRemove,

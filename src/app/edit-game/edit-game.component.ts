@@ -6,6 +6,9 @@ import { DataService } from '../data.service';
 import { Subscription } from 'rxjs/Subscription';
 import { isUndefined } from 'util';
 import { GameDataRaw, GameData } from "../interfaces.service";
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
+import { AppGameRemove } from "../edit-spieltag/edit-spieltag.component";
+
 
 @Component({
   selector: 'app-edit-game',
@@ -16,6 +19,7 @@ export class EditGameComponent implements OnInit, OnDestroy {
 
   points: number[];
   selectedPoints: number;
+  editMode: number;
 
   menuhelper: number;
 
@@ -38,7 +42,8 @@ export class EditGameComponent implements OnInit, OnDestroy {
     private router: Router,
     public auth: AuthenticationService, 
     private glob: GlobalService,
-    private dataService: DataService) {
+    private dataService: DataService,
+    public dialog: MatDialog) {
     
   }
 
@@ -107,8 +112,28 @@ export class EditGameComponent implements OnInit, OnDestroy {
       runde: this.runde
     }
   
-    this.dataService.editGame(gamedata,this.game);    
+    if (this.editMode == 2) {
+      this.dataService.addGameWithNr(gamedata,this.glob.spieltag,this.game);
+    } else {
+      this.dataService.editGame(gamedata,this.game);    
+    }
+      
     this.router.navigate(['/edit/spieltag', this.glob.spieltag]);  
+  }
+
+  remove():void {     
+
+    let dialogRef = this.dialog.open(AppGameRemove, {
+      width: '250px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if ( result ) {         
+        this.dataService.removeGameWithNr(this.glob.spieltag,this.game);
+        this.router.navigate(['/edit/spieltag', this.glob.spieltag]);  
+      }
+    });    
+    
   }
 
   toggle(ply): void {    

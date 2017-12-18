@@ -18,3 +18,16 @@
 button[disabled] {
     color:black !important;
 }
+
+.eraseBackground {
+    background: white;
+}
+
+.example-radio-group {
+    display: inline-flex;
+    flex-direction: column;
+}
+  
+.example-radio-button {
+    margin: 5px;
+}

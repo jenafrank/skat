@@ -224,6 +224,41 @@ export class DataService {
     
   }
 
+  addGameWithNr(data:any, spieltag:number, nr:number) {
+
+    data.activeThree = data.activeThree.join(" ");
+    data.allPlayers = data.allPlayers.join(" ");
+
+    let spieltagData: any = this.currentData[this.day(spieltag)];
+
+    let seasonStr: string = this.season(this.selectedSeason);
+    let spieltagStr: string = this.day(spieltag);
+    let gameStr: string = this.game(nr);
+
+    let objStr: string = seasonStr + "/" + spieltagStr;
+
+    let nc: Object = { ...spieltagData };
+
+    let i:number = 1;
+    let j:number = 1;
+    
+    while ( ! isUndefined(spieltagData[this.game(i)]) || j-1 == nr) {
+      if (j<=i) delete nc[this.game(j)];
+      if (j-1 != nr) {
+        nc[this.game(j)] = spieltagData[this.game(i)];
+        i++;
+      } else {
+        // i == nr
+        nc[this.game(j)] = data;
+      }     
+      j++;
+    }
+   
+    const ref = this.db.object(objStr);
+    ref.set(nc);  
+
+  }
+
   day(i:number):string {
     return i > 10 ? "day_"+i : "day_0"+i;
   }

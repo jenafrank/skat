@@ -77,6 +77,13 @@
 <table>
   <tr>
     <td style="width:100%">
+        <!-- OK Button if valid data set -->
+      <button mat-fab color="primary" *ngIf="validate()" (click)="editMode=2;onOkClick()">
+          <mat-icon>add</mat-icon>
+        </button>
+        <button mat-fab disabled *ngIf="!validate()">
+          <mat-icon>add</mat-icon>
+        </button>    
     </td>
     <td>
       <mat-form-field style="max-width:70px">
@@ -100,6 +107,17 @@
       </button>
       <button mat-fab disabled *ngIf="!validate()">
         <mat-icon>mode_edit</mat-icon>
+      </button>    
+    </td>
+  </tr>
+  <tr>      
+    <td style="width:100%">
+      <!-- OK Button if valid data set -->
+      <button mat-fab color="primary" *ngIf="validate()" (click)="remove()">
+        <mat-icon>remove</mat-icon>
+      </button>
+      <button mat-fab disabled *ngIf="!validate()">
+        <mat-icon>remove</mat-icon>
       </button>    
     </td>
   </tr>
