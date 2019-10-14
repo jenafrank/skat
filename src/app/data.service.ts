@@ -26,8 +26,8 @@ export class DataService {
   constructor(private db: AngularFireDatabase, private auth:AuthenticationService) {
     this.data = new BehaviorSubject(null);
     this.alternativeTitle = "";
-    this.currentSeason = 30; 
-    this.selectedSeason = 30;
+    this.currentSeason = 31; 
+    this.selectedSeason = 31;
     this.setSeason();
   }
 
