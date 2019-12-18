@@ -30,9 +30,16 @@ steps:
     workingDir: 'dist/'
   displayName: "Npm install in the dist folder for express"
 
-- task: AzureWebApp@1
+- task: FtpUpload@2
   inputs:
-    azureSubscription: "022200f7-a2af-4b65-ac77-66972f39214a"
-    appType: 'webAppLinux'
-    appName: 'gutblatt'
-    package: 'dist/'
+    credentialsOption: 'inputs'
+    serverUrl: 'ftps://waws-prod-am2-289.ftp.azurewebsites.windows.net/site/wwwroot'
+    username: 'gutblatt\$gutblatt'
+    password: '8geMfxl3KzomkuDtHwcDk1L2SMe44nCPwuXLveRljnwNwuBzuwobJMMz0yMe'
+    rootDirectory: 'dist/'
+    filePatterns: '**'
+    remoteDirectory: '/upload/$(Build.BuildId)/'
+    clean: false
+    cleanContents: false
+    preservePaths: false
+    trustSSL: false
