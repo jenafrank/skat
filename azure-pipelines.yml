@@ -29,3 +29,10 @@ steps:
     command: 'install'
     workingDir: 'dist/'
   displayName: "Npm install in the dist folder for express"
+
+- task: AzureWebApp@1
+  inputs:
+   azureSubscription: "022200f7-a2af-4b65-ac77-66972f39214a"
+    appType: 'webAppLinux'
+    appName: 'gutblatt'
+    package: 'dist/'
