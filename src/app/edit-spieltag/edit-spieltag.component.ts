@@ -211,6 +211,8 @@ export class EditSpieltagComponent implements OnInit {
 
   addGame(): void {
 
+    if (this.global.selectedIndexTabGroup == 0) return;
+
     let navigationExtras: NavigationExtras = {
       queryParams: { 
         spieltag: this.global.spieltag,
@@ -223,6 +225,8 @@ export class EditSpieltagComponent implements OnInit {
   }
 
   removeLastGame():void {
+
+    if (this.global.selectedIndexTabGroup == 0) return;
     
     let dialogRef = this.dialog.open(AppGameRemove, {
       width: '250px'
