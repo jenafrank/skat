@@ -38,7 +38,7 @@ steps:
     password: '8geMfxl3KzomkuDtHwcDk1L2SMe44nCPwuXLveRljnwNwuBzuwobJMMz0yMe'
     rootDirectory: 'dist/'
     filePatterns: '**'
-    remoteDirectory: '/'
+    remoteDirectory: '/site/wwwroot/'
     clean: false
     cleanContents: false
     preservePaths: false
