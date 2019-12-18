@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import { LogicService } from "./logic.service";
 import { isUndefined } from 'util';
-import Chart from "chart.js";
 import"chartjs-plugin-annotation";
 import { LabelsSpecial } from './interfaces.service';
+
+declare var Chart: any;
 
 @Injectable()
 export class PlotService {
   
-  myChart: Chart;
+  myChart: any;
   ctx: HTMLElement; 
 
   constructor(private logic:LogicService) {    
