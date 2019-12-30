@@ -34,7 +34,7 @@ steps:
     echo b=$(Build.BuildId)
     echo c=$SHA
     echo d=$BUILDID
-    firebase deploy --token 1//03Ncp0lDmQsG9CgYIARAAGAMSNwF-L9Iruch_pED-PZmSpXqmhAveOg34_ubImcImjSAv_GYqVbh2aauRFidcv7ehQX9wIsVjmyw --only hosting:luminous-inferno-9676 --message "Sha: $SHA Build: $BUILDID"
+    firebase deploy --token 1//03Ncp0lDmQsG9CgYIARAAGAMSNwF-L9Iruch_pED-PZmSpXqmhAveOg34_ubImcImjSAv_GYqVbh2aauRFidcv7ehQX9wIsVjmyw --only hosting:luminous-inferno-9676 --message "Build: $(Build.BuildNumber) Sha: $(Build.SourceVersion)"
   env: 
     Sha: $(Build.SourceVersion)
     BuildId: $(Build.BuildId)
