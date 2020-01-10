@@ -5,9 +5,7 @@ import { PlotService } from "../plot.service";
 import { DataService } from "../data.service";
 import { GlobalService } from "../global.service";
 import { AuthenticationService } from "../authentication.service";
-import { GameData } from "../interfaces.service";
 import { Subscription } from 'rxjs/Subscription';
-import { isUndefined } from 'util';
 
 @Component({
   selector: 'app-read',

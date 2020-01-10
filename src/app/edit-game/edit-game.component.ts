@@ -7,7 +7,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { isUndefined } from 'util';
 import { GameDataRaw, GameData } from "../interfaces.service";
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
-import { AppGameRemove } from "../edit-spieltag/edit-spieltag.component";
+import { AppGameRemove } from "../edit-spieltag/app-game-remove";
 
 
 @Component({
